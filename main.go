@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	cmd.Excite()
+	cmd.Execute()
 }
