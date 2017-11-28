@@ -18,9 +18,6 @@ var RootCmd = &cobra.Command{
 	Long: `git-me is a command-line tool which provide download service.
 	This tool has nothing to do with git or any other version control tool.
 	Git-me only focus on get media from web site to your computer.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) {},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -35,13 +32,9 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 	RootCmd.PersistentFlags().StringP("author", "a", "YusanK", "Author name for copyright attribution")
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
+
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gitMe/cmd"
+	"git-me/cmd"
 )
 
 func main() {
