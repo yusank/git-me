@@ -18,6 +18,9 @@ var RootCmd = &cobra.Command{
 	Long: `git-me is a command-line tool which provide download service.
 	This tool has nothing to do with git or any other version control tool.
 	Git-me only focus on get media from web site to your computer.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("hello")
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -32,8 +35,9 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	// PersistentFlags 是全局参数，即在所有的子命令也有效
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
-	RootCmd.PersistentFlags().StringP("author", "a", "YusanK", "Author name for copyright attribution")
+	RootCmd.Flags().StringP("author", "a", "YusanK", "Author name for copyright attribution")
 
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
