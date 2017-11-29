@@ -1,9 +1,28 @@
 package utils
 
 import (
-	"git-me/common"
+	"fmt"
+	"io/ioutil"
 	"net/http"
+
+	"git-me/common"
 )
+
+// GetDecodeHTML request url and read body
+func GetDecodeHTML(url string) []byte {
+	response, err := Response(url, false)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil
+	}
+	return body
+}
 
 // Response - get http response
 func Response(url string, isFake bool) (*http.Response, error) {

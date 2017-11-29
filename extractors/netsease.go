@@ -2,9 +2,9 @@ package extractors
 
 import (
 	"fmt"
-	"git-me/utils"
-	"io/ioutil"
 	"strings"
+
+	"git-me/utils"
 )
 
 // DownloadByURL -
@@ -19,27 +19,11 @@ func DownloadByURL(url string) {
 		return
 	}
 
-	data := string(GetDecodeHTML(url))
+	data := string(utils.GetDecodeHTML(url))
 	if len(data) == 0 {
 		fmt.Println("data is nil")
 		return
 	}
 
 	fmt.Println(data)
-}
-
-// GetDecodeHTML request url and read body
-func GetDecodeHTML(url string) []byte {
-	response, err := utils.Response(url, false)
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	defer response.Body.Close()
-
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil
-	}
-	return body
 }
