@@ -1,8 +1,11 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
+
+	"git-me/extractors"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -18,8 +21,14 @@ var RootCmd = &cobra.Command{
 	Long: `git-me is a command-line tool which provide download service.
 	This tool has nothing to do with git or any other version control tool.
 	Git-me only focus on get media from web site to your computer.`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires at least one arg")
+		}
+		return nil
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("hello")
+		extractors.DownloadByURL(args[0])
 	},
 }
 
