@@ -5,12 +5,12 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"git-me/common"
+	"time"
 )
 
 // GetDecodeHTML request url and read body
-func GetDecodeHTML(url string) []byte {
-	response, err := Response(url, false)
+func GetDecodeHTML(url string, header map[string]string) []byte {
+	response, err := Response(url, header)
 	if err != nil {
 		fmt.Println(err)
 		return nil
@@ -25,12 +25,8 @@ func GetDecodeHTML(url string) []byte {
 }
 
 // Response - get http response
-func Response(url string, isFake bool) (*http.Response, error) {
+func Response(url string, header map[string]string) (*http.Response, error) {
 	httpClient := &http.Client{}
-	header := make(map[string]string)
-	if isFake {
-		header = common.FakeHeader
-	}
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -47,4 +43,49 @@ func Response(url string, isFake bool) (*http.Response, error) {
 	}
 
 	return resp, nil
+}
+
+func RequestWithRetry(url string, header map[string]string) (resp *http.Response, err error) {
+	for i := 0; i < 3; i++ {
+		resp, err = Response(url, header)
+		if err != nil || resp == nil {
+			time.Sleep(500 * time.Millisecond)
+			err = nil
+		}
+	}
+	return
+}
+
+// GetContent -
+func GetContent(url, method string, header map[string]string) ([]byte, error) {
+	fmt.Printf("GetContent:%s\n", url)
+
+	httpClient := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range header {
+		req.Header.Set(k, v)
+	}
+	fmt.Println(url)
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return DecodeResp(resp)
+}
+
+// DecodeResp -
+func DecodeResp(resp *http.Response) ([]byte, error) {
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(len(body))
+	return body, nil
 }
