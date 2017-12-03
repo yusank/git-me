@@ -40,9 +40,9 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 			return err
 		}
 
-		for k, v := range j.Get("data").Get("brs").MustMap() {
-			fmt.Println(k, ":", v)
-		}
+		//for k, v := range j.Get("data").Get("brs").MustMap() {
+		//	fmt.Println(k, ":", v)
+		//}
 
 		vinfo := j.Get("data").MustMap()
 		NeteaseMvDownload(vinfo, outputDir, false)
@@ -131,6 +131,7 @@ func NeteaseMvDownload(vinfo map[string]interface{}, outputDir string, infoOnly 
 	for k := range urlBest {
 		keys = append(keys, k)
 	}
+	// sort and get the best quality mv
 	sort.Strings(keys)
 
 	NeteaseDownloadCommon(title, urlBest[keys[len(keys)-1]].(string), outputDir, infoOnly)

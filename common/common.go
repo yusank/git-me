@@ -10,6 +10,8 @@ import (
 	"strings"
 
 	"git-me/utils"
+	"io"
+	"time"
 )
 
 /*
@@ -211,12 +213,13 @@ func DownloadURL(urls []string, title, ext, outputDir string, size int, fake boo
 		outPath := path.Join(outputDir, title)
 		outPath = outPath + "." + ext
 		if err := URLSave(url, outPath, "", fake, header); err != nil {
-			fmt.Println(err)
+			fmt.Println("save error:", err)
 		}
 
 	}
 }
 
+//todo:完善各类检查：1.文件已存在
 func URLSave(url, path, refer string, fake bool, header map[string]string) error {
 	var (
 		err     error
@@ -224,12 +227,15 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 		timeOut int
 		resp    *http.Response
 	)
-	tmpHeaders := make(map[string]string)
+	if header == nil {
+		header = make(map[string]string)
+	}
+	tmpHeaders := header
 	if refer != "" {
-		tmpHeaders["Referer"] = refer
+		tmpHeaders["Referer"] = url
 	}
 
-	fileSize, err := URLSize(url, false, header)
+	fileSize, err := URLSize(url, false, tmpHeaders)
 	fmt.Println("size", fileSize)
 	if err != nil {
 		return err
@@ -255,14 +261,24 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 			if os.IsNotExist(err) {
 				file, err = os.Create(tmpFilePath)
 				if err != nil {
+					fmt.Println("create error")
 					return err
 				}
+				defer file.Close()
 			} else {
+				fmt.Println("get file stat error")
 				return err
 			}
 		} else {
+			file, err = os.OpenFile(tmpFilePath, os.O_RDWR|os.O_TRUNC, 0666)
+			if err != nil {
+				fmt.Println("file open error")
+				return err
+			}
+			defer file.Close()
 			size, err := file.Stat()
 			if err != nil {
+				fmt.Println("get size got error")
 				return err
 			}
 
@@ -279,31 +295,107 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 			tmpHeaders = FakeHeader
 		}
 
-		if received != 0 {
+		//if received != 0 {
 			tmpHeaders["Range"] = "bytes=" + fmt.Sprint(received) + "-"
-		}
+		//}
 
 		if refer != "" {
-			tmpHeaders["Referer"] = refer
+			tmpHeaders["Referer"] = url
 		}
 
 		if timeOut != 0 {
-			resp, err = utils.RequestWithRetry(url, header)
+			resp, err = utils.RequestWithRetry(url, tmpHeaders)
 			if err != nil || resp == nil {
 				timeOut++
 			}
 		} else {
-			resp, err = utils.Response(url, header)
+			resp, err = utils.Response(url, tmpHeaders)
 			if resp != nil {
 				fmt.Println("may be i got it")
 			}
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("1", err)
 			}
 		}
 
 		fmt.Println(open_mode)
-		fmt.Println(resp.Header.Get("content-range"))
+		var rangeLength int64
+		leng := resp.Header.Get("content-range")
+		if leng != ""{
+			leng := leng[6:]
+			lengStart := strings.Split(leng, "/")[0]
+			lengStart = strings.Split(lengStart, "-")[0]
+
+			lengEnd := strings.Split(leng, "/")[1]
+
+			rangeStart, err := strconv.ParseInt(lengStart,10,64)
+			if err != nil {
+				return err
+			}
+			rangeEnd, err := strconv.ParseInt(lengEnd,10, 64)
+			if err != nil {
+				return err
+			}
+			rangeLength = rangeEnd - rangeStart
+		} else {
+			leng = resp.Header.Get("content-length")
+
+			rangeLength, err = strconv.ParseInt(leng, 10, 64)
+			if err != nil {
+				return err
+			}
+		}
+
+		if fileSize != received+rangeLength {
+			received = 0
+			open_mode = "wb"
+		}
+
+		start := time.Now()
+		for {
+			buffer := make([]byte, 1024*256)
+			n, err := resp.Body.Read(buffer)
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				return err
+			}
+
+			if n == 0 {
+				if received == fileSize {
+					break // finish!
+				}
+
+				tmpHeaders["Range"] = "bytes=" + fmt.Sprint(received) + "-"
+				resp, err = utils.RequestWithRetry(url, tmpHeaders)
+				if err != nil {
+					fmt.Println(err)
+					// todo: 如何处理好？
+				}
+				continue
+			}
+
+			buffer = buffer[:n]
+			wn, err :=file.Write(buffer)
+			if err != nil {
+				fmt.Println(err)
+				return err
+				//todo: when actually use it should be continue but return
+			}
+
+			if wn != (n) {
+				fmt.Println("write error:",wn, n)
+			}
+			received += int64(wn)
+
+			fmt.Printf("\r%.2f", (float64(received)/float64(fileSize))*100)
+		}
+
+		fmt.Println("用时：", time.Now().Sub(start))
+		if err = os.Rename(tmpFilePath, path); err != nil {
+			fmt.Println("rename fiald:",err)
+		}
 
 	}
 
