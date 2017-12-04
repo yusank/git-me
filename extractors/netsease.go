@@ -124,6 +124,30 @@ func DownloadByURL(url string) {
 	fmt.Println(data, exc, size)
 }
 
+func NeteaseSongDownload(song map[string]interface{}, outputDir, playListPrefix string, infoOnly bool) {
+	title := fmt.Sprintf("%s%s. %s", playListPrefix, song["position"], song["name"])
+	nets := strings.Split(song["mp3Url"].(string), "/")
+	songNet := ""
+	if len(nets) > 2 && len(nets[2]) > 1{
+		songNet = nets[2][1:]
+	}
+
+	urlBest := ""
+	if hm, found := song["hMusic"]; found && hm != nil{
+		dfs := song["hMusic"].(map[string]interface{})
+		urlBest = MakeUrl(songNet, dfs["dfsId"].(string))
+	} else if mp, found := song["mp3Url"]; found {
+		urlBest = mp.(string)
+	}else if _, found := song["bMusic"]; found {
+		dfs := song["bMusic"].(map[string]interface{})
+		urlBest = MakeUrl(songNet, dfs["dfsId"].(string))
+	} else {
+		return
+	}
+
+	NeteaseDownloadCommon(title, urlBest, outputDir, infoOnly)
+}
+
 func NeteaseMvDownload(vinfo map[string]interface{}, outputDir string, infoOnly bool) {
 	title := fmt.Sprintf("%s - %s", vinfo["name"], vinfo["artistName"])
 	urlBest := vinfo["brs"].(map[string]interface{})
@@ -147,4 +171,10 @@ func NeteaseDownloadCommon(title string, urlBest string, outputDir string, infoO
 		fmt.Println("info:", title, songType, ext, size)
 		common.DownloadURL([]string{urlBest}, title, ext, outputDir, size, false, nil)
 	}
+}
+
+
+func MakeUrl(songNet, dfsId string) string {
+
+	return fmt.Sprintf("http://%s/%s/%s.mp3", songNet, "", dfsId)
 }
