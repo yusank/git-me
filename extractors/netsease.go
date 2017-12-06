@@ -14,6 +14,12 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 	rid := utils.Match(`\Wid=(.*)`, url)
 	if len(rid) == 0 {
 		rid = utils.Match(`/(\d+)/?`, url)
+		newRid := []string{}
+		for _, v := range rid {
+			s := v[1:]
+			newRid = append(newRid, s[:len(s)-1])
+		}
+		rid = newRid
 		fmt.Println(rid)
 	} else {
 		newRid := []string{}
@@ -31,34 +37,35 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 	case strings.Contains(url, "mv"):
 		fmt.Println("it`s mv")
 		reqUrl := fmt.Sprintf("http://music.163.com/api/mv/detail/?id=%s&ids=%s&csrf_token=", rid[0], rid)
-		body, err := utils.GetContent(reqUrl, "GET", header)
-		if err != nil {
-			return err
-		}
-		j, err := utils.LoadJSON(body)
-		if err != nil {
-			return err
-		}
 
-		//for k, v := range j.Get("data").Get("brs").MustMap() {
-		//	fmt.Println(k, ":", v)
-		//}
+		j, err := utils.LoadJSON(reqUrl, "GET", header)
+		if err != nil {
+			return err
+		}
 
 		vinfo := j.Get("data").MustMap()
 		NeteaseMvDownload(vinfo, outputDir, false)
 
 	case strings.Contains(url, "album"):
-		body, err := utils.GetContent(url, "GET", header)
-		if err != nil {
-			return err
-		}
-
-		j, err := utils.LoadJSON(body)
+		j, err := utils.LoadJSON(url,"GET", header)
 		if err != nil {
 			return err
 		}
 
 		fmt.Printf("%+v \n", j)
+	case strings.Contains(url, "program"):
+		reqUrl := fmt.Sprintf("http://music.163.com/api/dj/program/detail/?id=%s&ids=%s&csrf_token=", rid[0], rid)
+		common.FakeHeader["Referer"] = "http://music.163.com/"
+		fmt.Println(common.FakeHeader)
+		j, err := utils.LoadJSON(reqUrl, "GET", header)
+		if err != nil {
+			return err
+		}
+
+		songInfo, err := j.String()
+		fmt.Println(songInfo)
+		NeteaseSongDownload(nil, outputDir, "", false)
+
 	}
 
 	return nil
@@ -126,6 +133,10 @@ func DownloadByURL(url string) {
 
 func NeteaseSongDownload(song map[string]interface{}, outputDir, playListPrefix string, infoOnly bool) {
 	title := fmt.Sprintf("%s%s. %s", playListPrefix, song["position"], song["name"])
+	mp3Url := song["mp3Url"]
+	if mp3Url == nil {
+		return
+	}
 	nets := strings.Split(song["mp3Url"].(string), "/")
 	songNet := ""
 	if len(nets) > 2 && len(nets[2]) > 1{

@@ -2,11 +2,19 @@ package utils
 
 import (
 	"github.com/bitly/go-simplejson"
+	"fmt"
 )
 
 // LoadJSON unmarshal json to go interface
-func LoadJSON(data []byte) (*simplejson.Json, error) {
-	return simplejson.NewJson(data)
+func LoadJSON(url, method string, header map[string]string) (*simplejson.Json, error) {
+	body, err := GetContent(url, method, header)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(len(body))
+	fmt.Println(string(body))
+	return simplejson.NewJson(body)
 	// var f interface{}
 	// if err := json.Unmarshal(data, &f); err != nil {
 	// 	return nil, err
