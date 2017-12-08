@@ -10,9 +10,13 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"strings"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+	outputDir string
+)
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -28,7 +32,21 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		extractors.DownloadByURL(args[0])
+		// init map
+		extractors.BeforeRun()
+
+		isMatch := false
+		for k,v := range extractors.TransferMap {
+			if strings.Contains(args[0], k) {
+				isMatch = true
+				v(args[0], outputDir)
+				break
+			}
+		}
+
+		if !isMatch {
+			fmt.Println("I am very sorry.I can't parese this kind of url yet.")
+		}
 	},
 }
 
@@ -47,7 +65,7 @@ func init() {
 	// PersistentFlags 是全局参数，即在所有的子命令也有效
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 	RootCmd.Flags().StringP("author", "a", "YusanK", "Author name for copyright attribution")
-
+	RootCmd.Flags().StringVarP(&outputDir, "outputDir", "o", ".", "The path you want save the file.")
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 

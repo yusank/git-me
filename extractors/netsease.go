@@ -72,7 +72,7 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 }
 
 // DownloadByURL -
-func DownloadByURL(url string) {
+func DownloadByURL(url, outputDir string) {
 	if strings.Contains(url, "163.fm") {
 		fmt.Println(url)
 		return
@@ -80,7 +80,7 @@ func DownloadByURL(url string) {
 
 	if strings.Contains(url, "music.163.com") {
 		fmt.Println(url)
-		if err := NeteaseCloudMusicDownload(url, ""); err != nil {
+		if err := NeteaseCloudMusicDownload(url, outputDir); err != nil {
 			fmt.Println(err)
 		}
 		return
