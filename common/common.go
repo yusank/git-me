@@ -157,6 +157,23 @@ const (
 	forse = false
 )
 
+type VideoCommon struct {
+	Url               string
+	Title             string
+	Vid               string
+	M3u8Url           string
+	Streams           map[string]interface{}
+	StreamsSort       []interface{} // 排序了的 stream
+	AudioLang         string
+	PasswordProtected bool
+	DashStreams       map[string]interface{}
+	CaptionTracks     []string
+	Out               bool
+	UA                string
+	Referer           string
+	Danmuku           string
+}
+
 func UrlInfo(url string, fake bool, header map[string]string) (songType, ext string, size int, err error) {
 	fmt.Println("url:", url)
 	response := &http.Response{}
@@ -297,7 +314,7 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 		}
 
 		//if received != 0 {
-			tmpHeaders["Range"] = "bytes=" + fmt.Sprint(received) + "-"
+		tmpHeaders["Range"] = "bytes=" + fmt.Sprint(received) + "-"
 		//}
 
 		if refer != "" {
@@ -322,18 +339,18 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 		fmt.Println(open_mode)
 		var rangeLength int64
 		leng := resp.Header.Get("content-range")
-		if leng != ""{
+		if leng != "" {
 			leng := leng[6:]
 			lengStart := strings.Split(leng, "/")[0]
 			lengStart = strings.Split(lengStart, "-")[0]
 
 			lengEnd := strings.Split(leng, "/")[1]
 
-			rangeStart, err := strconv.ParseInt(lengStart,10,64)
+			rangeStart, err := strconv.ParseInt(lengStart, 10, 64)
 			if err != nil {
 				return err
 			}
-			rangeEnd, err := strconv.ParseInt(lengEnd,10, 64)
+			rangeEnd, err := strconv.ParseInt(lengEnd, 10, 64)
 			if err != nil {
 				return err
 			}
@@ -378,7 +395,7 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 			}
 
 			buffer = buffer[:n]
-			wn, err :=file.Write(buffer)
+			wn, err := file.Write(buffer)
 			if err != nil {
 				fmt.Println(err)
 				return err
@@ -386,7 +403,7 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 			}
 
 			if wn != (n) {
-				fmt.Println("write error:",wn, n)
+				fmt.Println("write error:", wn, n)
 			}
 			received += int64(wn)
 
@@ -395,7 +412,7 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 
 		fmt.Println("用时：", time.Now().Sub(start))
 		if err = os.Rename(tmpFilePath, path); err != nil {
-			fmt.Println("rename fiald:",err)
+			fmt.Println("rename fiald:", err)
 		}
 
 	}
