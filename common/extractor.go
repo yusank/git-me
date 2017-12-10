@@ -83,7 +83,8 @@ func (vp *Provider) Download(vc *VideoCommon, kv map[string]interface{}) {
 		if vc.Referer != "" {
 			header["Referer"] = vc.Referer
 		}
-		DownloadURL(urls, []string{vc.Title}, ext, kv["outpuDir"].(string), totalSize,false, header)
+		DownloadURL(urls, []string{vc.Title}, ext, kv["outputDir"].(string), totalSize,false, header)
+		// todo: 是否提供字幕下载功能？
 	}
 }
 
