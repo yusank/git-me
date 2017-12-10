@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"github.com/bitly/go-simplejson"
 	"fmt"
+	"github.com/bitly/go-simplejson"
 )
 
 // LoadJSON unmarshal json to go interface

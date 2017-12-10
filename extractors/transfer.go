@@ -1,5 +1,9 @@
 package extractors
 
+import (
+	"git-me/extractors/netease"
+)
+
 type CommonDownLoad func(url, outputDir string)
 
 var (
@@ -7,5 +11,5 @@ var (
 )
 
 func BeforeRun() {
-	TransferMap["163"] = DownloadByURL
+	TransferMap["163"] = netease.DownloadByURL
 }

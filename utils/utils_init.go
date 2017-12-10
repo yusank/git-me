@@ -6,9 +6,13 @@ import (
 	"net/url"
 )
 
-// init http-client and set agency if need
-func BeforeRun(port int) {
+// init http-client
+func InitHttpClient() {
 	httpClient = &http.Client{}
+
+}
+
+func SetProxy(port int) {
 	if port == 0 {
 		return
 	}

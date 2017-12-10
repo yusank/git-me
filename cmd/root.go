@@ -7,15 +7,15 @@ import (
 
 	"git-me/extractors"
 
+	"git-me/utils"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"strings"
-	"git-me/utils"
 )
 
 var (
-	cfgFile string
+	cfgFile   string
 	outputDir string
 	ProxyPort int
 )
@@ -35,13 +35,13 @@ var RootCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// init http-client
-		utils.BeforeRun(ProxyPort)
-		return
+		utils.InitHttpClient()
+		utils.SetProxy(ProxyPort)
 		// init map
 		extractors.BeforeRun()
 
 		isMatch := false
-		for k,v := range extractors.TransferMap {
+		for k, v := range extractors.TransferMap {
 			if strings.Contains(args[0], k) {
 				isMatch = true
 				v(args[0], outputDir)

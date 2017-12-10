@@ -5,18 +5,20 @@ import (
 	"log"
 )
 
-type VideoExtractor interface {
-	DownloadByUrl(vc *VideoCommon, url string, kv *map[string]interface{})
+type VideoPrepare interface {
+	Prepare(*VideoCommon, map[string]interface{})
 }
 
 type Provider struct{}
 
-func (vp *Provider) DownloadByUrl(vc *VideoCommon, url string, kv map[string]interface{}) {
+func (vp *Provider) DownloadByUrl(p VideoPrepare, vc *VideoCommon, url string, kv map[string]interface{}) {
 	vc.Url = url
 	if vc.Out {
 		return
 	}
 
+	p.Prepare(vc, kv)
+	vp.Download(vc, kv)
 }
 
 func (vp *Provider) Download(vc *VideoCommon, kv map[string]interface{}) {
@@ -83,7 +85,7 @@ func (vp *Provider) Download(vc *VideoCommon, kv map[string]interface{}) {
 		if vc.Referer != "" {
 			header["Referer"] = vc.Referer
 		}
-		DownloadURL(urls, []string{vc.Title}, ext, kv["outputDir"].(string), totalSize,false, header)
+		DownloadURL(urls, []string{vc.Title}, ext, kv["outputDir"].(string), totalSize, false, header)
 		// todo: 是否提供字幕下载功能？
 	}
 }

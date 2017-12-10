@@ -1,4 +1,4 @@
-package extractors
+package netease
 
 import (
 	"fmt"
@@ -126,7 +126,7 @@ func DownloadByURL(url, outputDir string) {
 	}
 
 	// todo:Print url_info
-	common.DownloadURL(urls, title, ext,outputDir,size, false, nil)
+	common.DownloadURL(urls, title, ext, outputDir, size, false, nil)
 	fmt.Println(urls)
 	fmt.Println(data, ext, size)
 }
@@ -139,17 +139,17 @@ func NeteaseSongDownload(song map[string]interface{}, outputDir, playListPrefix 
 	}
 	nets := strings.Split(song["mp3Url"].(string), "/")
 	songNet := ""
-	if len(nets) > 2 && len(nets[2]) > 1{
+	if len(nets) > 2 && len(nets[2]) > 1 {
 		songNet = nets[2][1:]
 	}
 
 	urlBest := ""
-	if hm, found := song["hMusic"]; found && hm != nil{
+	if hm, found := song["hMusic"]; found && hm != nil {
 		dfs := song["hMusic"].(map[string]interface{})
 		urlBest = MakeUrl(songNet, dfs["dfsId"].(string))
 	} else if mp, found := song["mp3Url"]; found {
 		urlBest = mp.(string)
-	}else if _, found := song["bMusic"]; found {
+	} else if _, found := song["bMusic"]; found {
 		dfs := song["bMusic"].(map[string]interface{})
 		urlBest = MakeUrl(songNet, dfs["dfsId"].(string))
 	} else {
@@ -183,7 +183,6 @@ func NeteaseDownloadCommon(title string, urlBest string, outputDir string, infoO
 		common.DownloadURL([]string{urlBest}, []string{title}, ext, outputDir, size, false, nil)
 	}
 }
-
 
 func MakeUrl(songNet, dfsId string) string {
 
