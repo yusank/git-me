@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+var (
+	httpClient *http.Client
+)
+
 // GetDecodeHTML request url and read body
 func GetDecodeHTML(url string, header map[string]string) []byte {
 	response, err := Response(url, header)
@@ -26,7 +30,7 @@ func GetDecodeHTML(url string, header map[string]string) []byte {
 
 // Response - get http response
 func Response(url string, header map[string]string) (*http.Response, error) {
-	httpClient := &http.Client{}
+	//httpClient := &http.Client{}
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -57,20 +61,10 @@ func RequestWithRetry(url string, header map[string]string) (resp *http.Response
 }
 
 // GetContent -
-func GetContent(url, method string, header map[string]string) ([]byte, error) {
+func GetContent(url string, header map[string]string) ([]byte, error) {
 	fmt.Printf("GetContent:%s\n", url)
 
-	httpClient := &http.Client{}
-	req, err := http.NewRequest(method, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	for k, v := range header {
-		req.Header.Set(k, v)
-	}
-	fmt.Println(url)
-	resp, err := httpClient.Do(req)
+	resp, err := Response(url, header)
 	if err != nil {
 		return nil, err
 	}

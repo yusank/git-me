@@ -38,7 +38,7 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 		fmt.Println("it`s mv")
 		reqUrl := fmt.Sprintf("http://music.163.com/api/mv/detail/?id=%s&ids=%s&csrf_token=", rid[0], rid)
 
-		j, err := utils.LoadJSON(reqUrl, "GET", header)
+		j, err := utils.LoadJSON(reqUrl, header)
 		if err != nil {
 			return err
 		}
@@ -47,7 +47,7 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 		NeteaseMvDownload(vinfo, outputDir, false)
 
 	case strings.Contains(url, "album"):
-		j, err := utils.LoadJSON(url,"GET", header)
+		j, err := utils.LoadJSON(url, header)
 		if err != nil {
 			return err
 		}
@@ -57,7 +57,7 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 		reqUrl := fmt.Sprintf("http://music.163.com/api/dj/program/detail/?id=%s&ids=%s&csrf_token=", rid[0], rid)
 		common.FakeHeader["Referer"] = "http://music.163.com/"
 		fmt.Println(common.FakeHeader)
-		j, err := utils.LoadJSON(reqUrl, "GET", header)
+		j, err := utils.LoadJSON(reqUrl, header)
 		if err != nil {
 			return err
 		}

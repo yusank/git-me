@@ -11,11 +11,13 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"strings"
+	"git-me/utils"
 )
 
 var (
 	cfgFile string
 	outputDir string
+	ProxyPort int
 )
 
 // RootCmd represents the base command when called without any subcommands
@@ -32,6 +34,9 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		// init http-client
+		utils.BeforeRun(ProxyPort)
+		return
 		// init map
 		extractors.BeforeRun()
 
@@ -66,7 +71,7 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 	RootCmd.Flags().StringP("author", "a", "YusanK", "Author name for copyright attribution")
 	RootCmd.Flags().StringVarP(&outputDir, "outputDir", "o", ".", "The path you want save the file.")
-	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	RootCmd.Flags().IntVarP(&ProxyPort, "proxyPort", "p", 0, "use agency when you need.")
 }
 
 // initConfig reads in config file and ENV variables if set.
