@@ -107,11 +107,11 @@ func DownloadByURL(url, outputDir string) {
 	}
 
 	urls := []string{}
-	exc := ""
+	ext := ""
 	size := 0
 	if len(src) > 0 {
 		urls = src
-		exc = "mp4"
+		ext = "mp4"
 		size = 1
 		// url_info func, return ext, size
 
@@ -122,13 +122,13 @@ func DownloadByURL(url, outputDir string) {
 		}
 
 		size = 2
-		exc = "mp4"
+		ext = "mp4"
 	}
 
 	// todo:Print url_info
-	// download func
+	common.DownloadURL(urls, title, ext,outputDir,size, false, nil)
 	fmt.Println(urls)
-	fmt.Println(data, exc, size)
+	fmt.Println(data, ext, size)
 }
 
 func NeteaseSongDownload(song map[string]interface{}, outputDir, playListPrefix string, infoOnly bool) {
@@ -180,7 +180,7 @@ func NeteaseDownloadCommon(title string, urlBest string, outputDir string, infoO
 	}
 	if !infoOnly {
 		fmt.Println("info:", title, songType, ext, size)
-		common.DownloadURL([]string{urlBest}, title, ext, outputDir, size, false, nil)
+		common.DownloadURL([]string{urlBest}, []string{title}, ext, outputDir, size, false, nil)
 	}
 }
 

@@ -202,13 +202,14 @@ func UrlInfo(url string, fake bool, header map[string]string) (songType, ext str
 	return
 }
 
-func DownloadURL(urls []string, title, ext, outputDir string, size int, fake bool, header map[string]string) {
+func DownloadURL(urls, titles []string, ext, outputDir string, size int, fake bool, header map[string]string) {
 	if len(urls) == 0 {
 		return
 	}
 
 	if len(urls) == 1 {
 		url := urls[0]
+		title := titles[0]
 		fmt.Println("start downloading...", url)
 		outPath := path.Join(outputDir, title)
 		outPath = outPath + "." + ext
