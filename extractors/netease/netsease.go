@@ -185,6 +185,5 @@ func NeteaseDownloadCommon(title string, urlBest string, outputDir string, infoO
 }
 
 func MakeUrl(songNet, dfsId string) string {
-
 	return fmt.Sprintf("http://%s/%s/%s.mp3", songNet, "", dfsId)
 }
