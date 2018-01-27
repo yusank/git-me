@@ -2,16 +2,16 @@ package common
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	httpurl "net/url"
 	"os"
 	"path"
 	"strconv"
 	"strings"
+	"time"
 
 	"git-me/utils"
-	"io"
-	"time"
 )
 
 /*
@@ -156,23 +156,6 @@ var (
 const (
 	isForce = false
 )
-
-type VideoCommon struct {
-	Url               string
-	Title             string
-	Vid               string
-	M3u8Url           string
-	Streams           map[string]interface{}
-	StreamsSort       []interface{} // 排序了的 stream
-	AudioLang         string
-	PasswordProtected bool
-	DashStreams       map[string]interface{}
-	CaptionTracks     []string
-	Out               bool
-	UA                string
-	Referer           string
-	Danmuku           string
-}
 
 func UrlInfo(url string, fake bool, header map[string]string) (songType, ext string, size int, err error) {
 	fmt.Println("url:", url)

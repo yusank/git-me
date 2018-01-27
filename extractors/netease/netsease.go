@@ -9,8 +9,11 @@ import (
 	"git-me/utils"
 )
 
+var globalOutputDir string
+
 // DownloadByURL -
 func DownloadByURL(url, outputDir string) {
+	globalOutputDir = outputDir
 	if strings.Contains(url, "163.fm") {
 		fmt.Println(url)
 		return
@@ -18,7 +21,7 @@ func DownloadByURL(url, outputDir string) {
 
 	if strings.Contains(url, "music.163.com") {
 		fmt.Println(url)
-		if err := NeteaseCloudMusicDownload(url, outputDir); err != nil {
+		if err := NeteaseCloudMusicDownload(url); err != nil {
 			fmt.Println(err)
 		}
 		return
@@ -64,13 +67,13 @@ func DownloadByURL(url, outputDir string) {
 	}
 
 	// todo:Print url_info
-	common.DownloadURL(urls, title, ext, outputDir, size, false, nil)
+	common.DownloadURL(urls, title, ext, globalOutputDir, size, false, nil)
 	fmt.Println(urls)
 	fmt.Println(data, ext, size)
 }
 
 // NeteaseCloudMusicDownload -
-func NeteaseCloudMusicDownload(url, outputDir string) error {
+func NeteaseCloudMusicDownload(url string) error {
 	rid := utils.Match(`\Wid=(.*)`, url)
 	if len(rid) == 0 {
 		rid = utils.Match(`/(\d+)/?`, url)
@@ -104,7 +107,7 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 		}
 
 		vinfo := j.Get("data").MustMap()
-		NeteaseMvDownload(vinfo, outputDir, false)
+		NeteaseMvDownload(vinfo, false)
 
 	case strings.Contains(url, "album"):
 		j, err := utils.LoadJSON(url, header)
@@ -124,7 +127,7 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 
 		songInfo, err := j.String()
 		fmt.Println(songInfo)
-		NeteaseSongDownload(nil, outputDir, "", false)
+		NeteaseSongDownload(nil, "", false)
 
 	}
 
@@ -133,7 +136,7 @@ func NeteaseCloudMusicDownload(url, outputDir string) error {
 
 // todo: remove!!!
 // not useful
-func NeteaseSongDownload(song map[string]interface{}, outputDir, playListPrefix string, infoOnly bool) {
+func NeteaseSongDownload(song map[string]interface{}, playListPrefix string, infoOnly bool) {
 	title := fmt.Sprintf("%s%s. %s", playListPrefix, song["position"], song["name"])
 	mp3Url := song["mp3Url"]
 	if mp3Url == nil {
@@ -158,10 +161,10 @@ func NeteaseSongDownload(song map[string]interface{}, outputDir, playListPrefix 
 		return
 	}
 
-	NeteaseDownloadCommon(title, urlBest, outputDir, infoOnly)
+	NeteaseDownloadCommon(title, urlBest, infoOnly)
 }
 
-func NeteaseMvDownload(vinfo map[string]interface{}, outputDir string, infoOnly bool) {
+func NeteaseMvDownload(vinfo map[string]interface{}, infoOnly bool) {
 	title := fmt.Sprintf("%s - %s", vinfo["name"], vinfo["artistName"])
 	urlBest := vinfo["brs"].(map[string]interface{})
 	keys := []string{}
@@ -171,10 +174,10 @@ func NeteaseMvDownload(vinfo map[string]interface{}, outputDir string, infoOnly 
 	// sort and get the best quality mv
 	sort.Strings(keys)
 
-	NeteaseDownloadCommon(title, urlBest[keys[len(keys)-1]].(string), outputDir, infoOnly)
+	NeteaseDownloadCommon(title, urlBest[keys[len(keys)-1]].(string), infoOnly)
 }
 
-func NeteaseDownloadCommon(title string, urlBest string, outputDir string, infoOnly bool) {
+func NeteaseDownloadCommon(title string, urlBest string, infoOnly bool) {
 	songType, ext, size, err := common.UrlInfo(urlBest, false, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -182,7 +185,7 @@ func NeteaseDownloadCommon(title string, urlBest string, outputDir string, infoO
 	}
 	if !infoOnly {
 		fmt.Println("info:", title, songType, ext, size)
-		common.DownloadURL([]string{urlBest}, []string{title}, ext, outputDir, size, false, nil)
+		common.DownloadURL([]string{urlBest}, []string{title}, ext, globalOutputDir, size, false, nil)
 	}
 }
 
