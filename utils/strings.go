@@ -31,3 +31,12 @@ func MatchSlice(text string, patterns []string) []string {
 		return result
 	}
 }
+
+// Min return min
+func Min(a,b int) int {
+	if a > b {
+		return b
+	}
+
+	return a
+}

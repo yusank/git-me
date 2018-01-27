@@ -36,13 +36,14 @@ var RootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// init http-client
 		utils.InitHttpClient()
-		utils.SetProxy(ProxyPort)
+		//utils.SetProxy(ProxyPort)
 		// init map
 		extractors.BeforeRun()
 
 		isMatch := false
 		for k, v := range extractors.TransferMap {
 			if strings.Contains(args[0], k) {
+				fmt.Println(args[0])
 				isMatch = true
 				v(args[0], outputDir)
 				break

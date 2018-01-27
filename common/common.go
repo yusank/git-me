@@ -154,7 +154,7 @@ var (
 )
 
 const (
-	forse = false
+	isForce = false
 )
 
 type VideoCommon struct {
@@ -220,11 +220,11 @@ func UrlInfo(url string, fake bool, header map[string]string) (songType, ext str
 }
 
 func DownloadURL(urls, titles []string, ext, outputDir string, size int, fake bool, header map[string]string) {
-	if len(urls) == 0 {
+	if len(urls) < 1 {
 		return
 	}
 
-	if len(urls) == 1 {
+	for i := 0; i < utils.Min(len(urls), len(titles)); i++ {
 		url := urls[0]
 		title := titles[0]
 		fmt.Println("start downloading...", url)
@@ -233,7 +233,6 @@ func DownloadURL(urls, titles []string, ext, outputDir string, size int, fake bo
 		if err := URLSave(url, outPath, "", fake, header); err != nil {
 			fmt.Println("save error:", err)
 		}
-
 	}
 }
 
@@ -272,7 +271,7 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 
 	var received int64
 	open_mode := ""
-	if !forse {
+	if !isForce {
 		open_mode = "ab"
 		_, err := os.Stat(tmpFilePath)
 		if err != nil {
