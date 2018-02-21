@@ -16,7 +16,7 @@ import (
 
 var (
 	cfgFile   string
-	outputDir string
+	OutputDir string
 	ProxyPort int
 )
 
@@ -36,15 +36,16 @@ var RootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// init http-client
 		utils.InitHttpClient()
-		utils.SetProxy(ProxyPort)
+		//utils.SetProxy(ProxyPort)
 		// init map
 		extractors.BeforeRun()
 
 		isMatch := false
 		for k, v := range extractors.TransferMap {
 			if strings.Contains(args[0], k) {
+				fmt.Println(args[0])
 				isMatch = true
-				v(args[0], outputDir)
+				v(args[0], OutputDir)
 				break
 			}
 		}
@@ -70,7 +71,7 @@ func init() {
 	// PersistentFlags 是全局参数，即在所有的子命令也有效
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 	RootCmd.Flags().StringP("author", "a", "YusanK", "Author name for copyright attribution")
-	RootCmd.Flags().StringVarP(&outputDir, "outputDir", "o", ".", "The path you want save the file.")
+	RootCmd.Flags().StringVarP(&OutputDir, "outputDir", "o", ".", "The path you want save the file.")
 	RootCmd.Flags().IntVarP(&ProxyPort, "proxyPort", "p", 0, "use agency when you need.")
 }
 

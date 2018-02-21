@@ -1,3 +1,3 @@
-package youtube
+package youku
 
 func DownLoadByURL(url, outputDir string) {}
