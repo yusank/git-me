@@ -7,4 +7,3 @@ import (
 func Init() error {
 	return model.PrepareUser()
 }
-

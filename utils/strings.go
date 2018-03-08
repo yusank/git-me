@@ -33,7 +33,7 @@ func MatchSlice(text string, patterns []string) []string {
 }
 
 // Min return min
-func Min(a,b int) int {
+func Min(a, b int) int {
 	if a > b {
 		return b
 	}
