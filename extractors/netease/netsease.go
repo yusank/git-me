@@ -9,14 +9,26 @@ import (
 	"git-me/utils"
 )
 
+type BasicInfo struct {
+	Url string
+}
+
 var globalOutputDir string
 
+func (wy BasicInfo) Prepare(params map[string]interface{}) error {
+	return nil
+}
+
+func (wy BasicInfo) Download(param map[string]interface{}) error {
+	return DownloadByURL(param["url"].(string), param["output"].(string))
+}
+
 // DownloadByURL -
-func DownloadByURL(url, outputDir string) {
+func DownloadByURL(url, outputDir string) error {
 	globalOutputDir = outputDir
 	if strings.Contains(url, "163.fm") {
 		fmt.Println(url)
-		return
+		return nil
 	}
 
 	if strings.Contains(url, "music.163.com") {
@@ -24,13 +36,13 @@ func DownloadByURL(url, outputDir string) {
 		if err := NeteaseCloudMusicDownload(url); err != nil {
 			fmt.Println(err)
 		}
-		return
+		return nil
 	}
 
 	data := string(utils.GetDecodeHTML(url, nil))
 	if len(data) == 0 {
 		fmt.Println("data is nil")
-		return
+		return nil
 	}
 
 	title := utils.Match(`movieDescription=\'([^\']+)\'`, data)
@@ -70,6 +82,8 @@ func DownloadByURL(url, outputDir string) {
 	common.DownloadURL(urls, title, ext, globalOutputDir, size, false, nil)
 	fmt.Println(urls)
 	fmt.Println(data, ext, size)
+
+	return nil
 }
 
 // NeteaseCloudMusicDownload -
