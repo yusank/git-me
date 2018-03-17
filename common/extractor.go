@@ -8,7 +8,7 @@ type VideoExtractor interface {
 	Download(params map[string]interface{}) error
 }
 
-func downloadByUrl(v VideoExtractor, params map[string]interface{}) error {
+func DownloadByUrl(v VideoExtractor, params map[string]interface{}) error {
 	if err := v.Prepare(params);err != nil {
 		return err
 	}

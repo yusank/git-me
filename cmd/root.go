@@ -41,11 +41,11 @@ var RootCmd = &cobra.Command{
 		extractors.BeforeRun()
 
 		isMatch := false
-		for k, v := range extractors.TransferMap {
+		for k := range extractors.TransferMap {
 			if strings.Contains(args[0], k) {
 				fmt.Println(args[0])
 				isMatch = true
-				v(args[0], OutputDir)
+				extractors.Foo(k)
 				break
 			}
 		}
