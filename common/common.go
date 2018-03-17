@@ -219,6 +219,11 @@ func DownloadURL(urls, titles []string, ext, outputDir string, size int, fake bo
 	}
 }
 
+func DownloadVid(i VideoExtractor) error {
+	i.Prepare(map[string]interface{}{})
+	return nil
+}
+
 //todo:完善各类检查：1.文件已存在
 func URLSave(url, path, refer string, fake bool, header map[string]string) error {
 	var (
