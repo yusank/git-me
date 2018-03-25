@@ -34,7 +34,7 @@ func (xm BasicInfo) Prepare(Params map[string]interface{}) error {
 	return nil
 }
 
-func (xm BasicInfo) Download(params map[string]interface{}) error {
+func (xm BasicInfo) Download(url string) (common.VideoData ,error) {
 	// albums
 
 	// collections
@@ -42,8 +42,7 @@ func (xm BasicInfo) Download(params map[string]interface{}) error {
 	// single track
 
 	// mv
-	downloadMv(params["url"].(string), "")
-	return nil
+	return downloadMv(url)
 }
 
 func downloadSong(id, outputDir, infoOnly string) error {
@@ -55,18 +54,21 @@ func downloadSong(id, outputDir, infoOnly string) error {
 	return nil
 }
 
-func downloadMv(url, outputDir string) error {
+func downloadMv(url string) (data common.VideoData,err error){
 	page, err := utils.GetContent(url, nil)
 	if err != nil {
-		return err
+		return
 	}
 	//fmt.Println(string(page))
 
-	title := "abc.flv"
+	title := "xiami.flv"
 	match := utils.Match(`<title>(^<]+)`, string(page))
 	if len(match) > 0 {
 		title = match[0]
 	}
+
+	data.Title = title
+	data.Type = "video"
 
 	vid, uid := "", ""
 	match = utils.Match(`vid:"(\d+)"`, string(page))
@@ -84,19 +86,23 @@ func downloadMv(url, outputDir string) error {
 	apiUrl := fmt.Sprintf("http://cloud.video.taobao.com/videoapi/info.php?vid=%s&uid=%s", vid, uid)
 	result, err := utils.GetContent(apiUrl, nil)
 	if err != nil {
-		return err
+		return
 	}
 
 	fmt.Println(string(result))
 
 	doc, err := goquery.NewDocument(apiUrl)
 	if err != nil {
-		return err
+		return
 	}
 
 	str := doc.Find("video_url").Eq(-1).Text()
 	end := doc.Find("length").Eq(-1).Text()
 	str += fmt.Sprintf("/start_%d/end_%s/1.flv", 0, end)
+	u := common.URLData{
+		URL: str,
+	}
+	data.URLs = append(data.URLs, u)
 
-	return common.URLSave(str, outputDir+title, "", true, nil)
+	return
 }
