@@ -1,30 +1,56 @@
 package utils
 
 import (
-	"fmt"
+	"golang.org/x/net/proxy"
+	"net"
 	"net/http"
-	"net/url"
+	netURL "net/url"
+	"time"
+)
+
+var (
+	// HttpProxy HTTP proxy
+	HttpProxy string
+	// Socks5Proxy SOCKS5 proxy
+	Socks5Proxy string
 )
 
 // init http-client
 func InitHttpClient() {
-	httpClient = &http.Client{}
-
+	httpClient = &http.Client{
+		Timeout:   time.Second * 100,
+		}
+	initProxy()
 }
 
-func SetProxy(port int) {
-	if port == 0 {
-		return
-	}
-
-	localUrl := fmt.Sprintf("http://127.0.0.1:%d", port)
-	proxy := func(_ *http.Request) (*url.URL, error) {
-		return url.Parse(localUrl)
-	}
-
-	// set agency
+func initProxy() {
 	transport := &http.Transport{
-		Proxy: proxy,
+		DisableCompression:  true,
+		TLSHandshakeTimeout: 10 * time.Second,
+	}
+
+	if HttpProxy != "" {
+		var httpProxy, err = netURL.Parse(HttpProxy)
+		if err != nil {
+			panic(err)
+		}
+		transport.Proxy = http.ProxyURL(httpProxy)
+	}
+
+	if Socks5Proxy != "" {
+		dialer, err := proxy.SOCKS5(
+			"tcp",
+			Socks5Proxy,
+			nil,
+			&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+			},
+		)
+		if err != nil {
+			panic(err)
+		}
+		transport.Dial = dialer.Dial
 	}
 
 	httpClient.Transport = transport
