@@ -5,13 +5,20 @@ type VideoExtractor interface {
 	//DownLoadByVid(vid string, params map[string]interface{}) error
 	Prepare(params map[string]interface{}) error
 	//Extract(params map[string]interface{}) error
-	Download(params map[string]interface{}) error
+	Download(url string) (VideoData, error)
 }
 
 func DownloadByUrl(v VideoExtractor, params map[string]interface{}) error {
-	if err := v.Prepare(params);err != nil {
+	if err := v.Prepare(params); err != nil {
 		return err
 	}
 
-	return v.Download(params)
+	vid, err := v.Download(params["url"].(string))
+	if err != nil {
+		return err
+	}
+
+	vid.OutputDir = params["output"].(string)
+
+	return vid.DownloadURL(params["url"].(string))
 }

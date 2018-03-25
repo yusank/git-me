@@ -21,10 +21,10 @@ func BeforeRun() {
 	TransferMap["xiami"] = xiami.BasicInfo{}
 }
 
-func Foo(key string) {
-	val := TransferMap[key]
+func Foo(uri,output string, implement interface{}) {
 	param := map[string]interface{}{
-		"url": "http://www.xiami.com/mv/K6YvR7?spm=a1z1s.2943549.6862561.2.CoVfLo",
+		"url": uri,
+		"output":output,
 	}
-	common.DownloadByUrl(val.(common.VideoExtractor), param)
+	common.DownloadByUrl(implement.(common.VideoExtractor), param)
 }
