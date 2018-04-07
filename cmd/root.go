@@ -51,7 +51,8 @@ var RootCmd = &cobra.Command{
 		}
 
 		if !isMatch {
-			fmt.Println("I am very sorry.I can't parese this kind of url yet.")
+			fmt.Println("I am very sorry.I can't parese this kind of url yet. but I still try to download it.")
+			extractors.Foo(uri,OutputDir, extractors.TransferMap["general"])
 		}
 	},
 }

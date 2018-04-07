@@ -16,3 +16,8 @@ type VideoCommon struct {
 	Referer           string
 	Danmuku           string
 }
+
+const (
+	DefaultSize = 1024 * 64
+	DefaultText = "default"
+)

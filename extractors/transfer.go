@@ -6,6 +6,7 @@ import (
 	"git-me/extractors/xiami"
 	"git-me/extractors/youku"
 	"git-me/extractors/youtube"
+	"git-me/extractors/general"
 )
 
 type CommonDownLoad func(url, outputDir string)
@@ -19,6 +20,7 @@ func BeforeRun() {
 	TransferMap["youku"] = youku.BasicInfo{}
 	TransferMap["youtube"] = youtube.BasicInfo{}
 	TransferMap["xiami"] = xiami.BasicInfo{}
+	TransferMap["general"] = general.BasicInfo{}
 }
 
 func Foo(uri,output string, implement interface{}) {
