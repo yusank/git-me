@@ -97,9 +97,7 @@ func youtubeDownload(uri string, result *common.VideoData) {
 	var youtube youtubeData
 	json.Unmarshal([]byte(ytplayer), &youtube)
 	title := youtube.Args.Title
-	fmt.Println("[title]", title)
 	streams := strings.Split(youtube.Args.Stream, ",")
-	fmt.Println("[streams]", streams)
 	stream, _ := url.ParseQuery(streams[0]) // Best quality
 	quality := stream.Get("quality")
 	fmt.Println("[quality]", quality)
@@ -133,6 +131,7 @@ func youtubeDownload(uri string, result *common.VideoData) {
 
 	result.Site = "YouTube youtube.com"
 	result.Title = utils.FileName(title)
+	fmt.Println("[youtube] title:", result.Title)
 	result.Size = size
 	result.Quality = quality
 	result.URLs = append(result.URLs, urlData)

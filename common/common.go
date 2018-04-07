@@ -210,8 +210,8 @@ func (vid VideoData) DownloadURL(refer string) error {
 
 	if len(vid.URLs) == 1 {
 		singleMedia := vid.URLs[0]
-		fmt.Println("start downloading...", singleMedia.URL)
-		outPath := path.Join(vid.OutputDir, fmt.Sprintf("%s", vid.Title), singleMedia.Ext)
+		outPath := path.Join(vid.OutputDir, fmt.Sprintf("%s.%s", vid.Title, singleMedia.Ext))
+		fmt.Println("start downloading...", vid.OutputDir, vid.Title, singleMedia.Ext)
 		if err := URLSave(singleMedia, outPath, refer); err != nil {
 			fmt.Println("save error:", err)
 			return err
@@ -280,7 +280,7 @@ func URLSave(url URLData, path, refer string) error {
 			if os.IsNotExist(err) {
 				file, err = os.Create(tmpFilePath)
 				if err != nil {
-					fmt.Println("create error")
+					fmt.Printf("create %s error: %v \n",tmpFilePath, err)
 					return err
 				}
 				defer file.Close()
@@ -403,7 +403,7 @@ func URLSave(url URLData, path, refer string) error {
 			}
 			received += int64(wn)
 
-			fmt.Printf("\r%.2f", (float64(received)/float64(fileSize))*100)
+			fmt.Printf("正在下载: \r%.2f ...", (float64(received)/float64(fileSize))*100)
 		}
 
 		fmt.Println("用时：", time.Now().Sub(start))
