@@ -1,0 +1,6 @@
+{
+  "mongoConnection":"mongo",
+  "redisHost":"",
+  "redisPort":"",
+  "redisPassword":""
+}

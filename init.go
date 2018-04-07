@@ -1,9 +1,9 @@
 package main
 
 import (
-	"git-me/model"
+	"git-me/models"
 )
 
 func Init() error {
-	return model.PrepareUser()
+	return models.PrepareUser()
 }
