@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"git-me/utils"
+	"sync"
 )
 
 /*
@@ -164,7 +165,7 @@ func UrlInfo(url string, fake bool, header map[string]string) (songType, ext str
 		return
 	}
 
-	response, err = utils.Response(url, header)
+	response, err = utils.Request(url, header)
 	if err != nil {
 		return
 	}
@@ -202,40 +203,58 @@ func UrlInfo(url string, fake bool, header map[string]string) (songType, ext str
 	return
 }
 
-func DownloadURL(urls, titles []string, ext, outputDir string, size int, fake bool, header map[string]string) {
-	if len(urls) < 1 {
-		return
+func (vid VideoData) DownloadURL(refer string) error {
+	if len(vid.URLs) < 1 {
+		return fmt.Errorf("empty url")
 	}
 
-	for i := 0; i < utils.Min(len(urls), len(titles)); i++ {
-		url := urls[0]
-		title := titles[0]
-		fmt.Println("start downloading...", url)
-		outPath := path.Join(outputDir, title)
-		outPath = outPath + "." + ext
-		if err := URLSave(url, outPath, "", fake, header); err != nil {
+	if len(vid.URLs) == 1 {
+		singleMedia := vid.URLs[0]
+		outPath := path.Join(vid.OutputDir, fmt.Sprintf("%s.%s", vid.Title, singleMedia.Ext))
+		fmt.Println("start downloading...", vid.OutputDir, vid.Title, singleMedia.Ext)
+		if err := URLSave(singleMedia, outPath, refer); err != nil {
 			fmt.Println("save error:", err)
+			return err
 		}
+	} else {
+		var wg sync.WaitGroup
+
+		for i, url := range vid.URLs {
+			fmt.Println("start downloading...", url.URL)
+			outPath := path.Join(vid.OutputDir, fmt.Sprintf("%s[%d]", vid.Title, i), url.Ext)
+			if strings.Contains(refer, "mgtv") {
+				// Too many threads cause mgtv to return HTTP 403 error
+				URLSave(url, outPath, refer)
+			} else {
+				wg.Add(1)
+				go func(url URLData, output, referer string) {
+					URLSave(url, output, referer)
+					wg.Done()
+				}(url, outPath, refer)
+			}
+		}
+		wg.Wait()
 	}
+
+	return nil
 }
 
 //todo:完善各类检查：1.文件已存在
-func URLSave(url, path, refer string, fake bool, header map[string]string) error {
+func URLSave(url URLData, path, refer string) error {
 	var (
 		err     error
 		file    *os.File
 		timeOut int
 		resp    *http.Response
 	)
-	if header == nil {
-		header = make(map[string]string)
-	}
-	tmpHeaders := header
+
+	tmpHeaders := make(map[string]string)
+
 	if refer != "" {
-		tmpHeaders["Referer"] = url
+		tmpHeaders["Referer"] = url.URL
 	}
 
-	fileSize, err := URLSize(url, false, tmpHeaders)
+	fileSize, err := URLSize(url.URL, false, tmpHeaders)
 	fmt.Println("size", fileSize)
 	if err != nil {
 		return err
@@ -261,7 +280,7 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 			if os.IsNotExist(err) {
 				file, err = os.Create(tmpFilePath)
 				if err != nil {
-					fmt.Println("create error")
+					fmt.Printf("create %s error: %v \n",tmpFilePath, err)
 					return err
 				}
 				defer file.Close()
@@ -290,26 +309,21 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 	}
 
 	if received < fileSize {
-
-		if fake {
-			tmpHeaders = FakeHeader
-		}
-
 		//if received != 0 {
 		tmpHeaders["Range"] = "bytes=" + fmt.Sprint(received) + "-"
 		//}
 
 		if refer != "" {
-			tmpHeaders["Referer"] = url
+			tmpHeaders["Referer"] = url.URL
 		}
 
 		if timeOut != 0 {
-			resp, err = utils.RequestWithRetry(url, tmpHeaders)
+			resp, err = utils.RequestWithRetry(url.URL, tmpHeaders)
 			if err != nil || resp == nil {
 				timeOut++
 			}
 		} else {
-			resp, err = utils.Response(url, tmpHeaders)
+			resp, err = utils.Request(url.URL, tmpHeaders)
 			if resp != nil {
 				fmt.Println("may be i got it")
 			}
@@ -368,7 +382,7 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 				}
 
 				tmpHeaders["Range"] = "bytes=" + fmt.Sprint(received) + "-"
-				resp, err = utils.RequestWithRetry(url, tmpHeaders)
+				resp, err = utils.RequestWithRetry(url.URL, tmpHeaders)
 				if err != nil {
 					fmt.Println(err)
 					// todo: 如何处理好？
@@ -389,7 +403,7 @@ func URLSave(url, path, refer string, fake bool, header map[string]string) error
 			}
 			received += int64(wn)
 
-			fmt.Printf("\r%.2f", (float64(received)/float64(fileSize))*100)
+			fmt.Printf("正在下载: \r%.2f ...", (float64(received)/float64(fileSize))*100)
 		}
 
 		fmt.Println("用时：", time.Now().Sub(start))
@@ -407,7 +421,7 @@ func URLSize(url string, fake bool, header map[string]string) (int64, error) {
 		header = FakeHeader
 	}
 
-	resp, err := utils.Response(url, header)
+	resp, err := utils.Request(url, header)
 	if err != nil {
 		return 0, err
 	}

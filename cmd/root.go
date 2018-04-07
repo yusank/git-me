@@ -4,20 +4,19 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"git-me/extractors"
-
 	"git-me/utils"
+
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 var (
-	cfgFile   string
-	OutputDir string
-	ProxyPort int
+	cfgFile     string
+	OutputDir   string
 )
 
 // RootCmd represents the base command when called without any subcommands
@@ -34,6 +33,7 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		uri := args[0]
 		// init http-client
 		utils.InitHttpClient()
 		//utils.SetProxy(ProxyPort)
@@ -41,17 +41,18 @@ var RootCmd = &cobra.Command{
 		extractors.BeforeRun()
 
 		isMatch := false
-		for k, v := range extractors.TransferMap {
-			if strings.Contains(args[0], k) {
-				fmt.Println(args[0])
+		for k,v := range extractors.TransferMap {
+			if strings.Contains(uri, k) {
+				fmt.Println(uri)
 				isMatch = true
-				v(args[0], OutputDir)
+				extractors.Foo(uri,OutputDir,v)
 				break
 			}
 		}
 
 		if !isMatch {
-			fmt.Println("I am very sorry.I can't parese this kind of url yet.")
+			fmt.Println("I am very sorry.I can't parese this kind of url yet. but I still try to download it.")
+			extractors.Foo(uri,OutputDir, extractors.TransferMap["general"])
 		}
 	},
 }
@@ -72,7 +73,9 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 	RootCmd.Flags().StringP("author", "a", "YusanK", "Author name for copyright attribution")
 	RootCmd.Flags().StringVarP(&OutputDir, "outputDir", "o", ".", "The path you want save the file.")
-	RootCmd.Flags().IntVarP(&ProxyPort, "proxyPort", "p", 0, "use agency when you need.")
+	RootCmd.Flags().StringVarP(&utils.HttpProxy, "proxyPort", "x", "", "use agency when you need.")
+	RootCmd.Flags().StringVarP(&utils.Socks5Proxy, "socketProxy", "s", "", "use agency when you need.")
+	RootCmd.Flags().StringVarP(&utils.Cookie, "cookie", "c", "", "use agency when you need.")
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -1,19 +1,32 @@
 package extractors
 
 import (
+	"git-me/common"
 	"git-me/extractors/netease"
+	"git-me/extractors/xiami"
 	"git-me/extractors/youku"
 	"git-me/extractors/youtube"
+	"git-me/extractors/general"
 )
 
 type CommonDownLoad func(url, outputDir string)
 
 var (
-	TransferMap = make(map[string]CommonDownLoad)
+	TransferMap = make(map[string]interface{})
 )
 
 func BeforeRun() {
-	TransferMap["163"] = netease.DownloadByURL
-	TransferMap["youku"] = youku.DownLoadByURL
-	TransferMap["youtube"] = youtube.DownLoadByURL
+	TransferMap["163"] = netease.BasicInfo{}
+	TransferMap["youku"] = youku.BasicInfo{}
+	TransferMap["youtube"] = youtube.BasicInfo{}
+	TransferMap["xiami"] = xiami.BasicInfo{}
+	TransferMap["general"] = general.BasicInfo{}
+}
+
+func Foo(uri,output string, implement interface{}) {
+	param := map[string]interface{}{
+		"url": uri,
+		"output":output,
+	}
+	common.DownloadByUrl(implement.(common.VideoExtractor), param)
 }

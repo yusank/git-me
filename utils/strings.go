@@ -16,6 +16,14 @@ func Match(pattern, text string) []string {
 	return reg.FindAllString(text, -1)
 }
 
+
+// MatchAll return all matching results
+func MatchAll(text, pattern string) [][]string {
+	re := regexp.MustCompile(pattern)
+	value := re.FindAllStringSubmatch(text, -1)
+	return value
+}
+
 // MatchSlice match multi regex in text
 func MatchSlice(text string, patterns []string) []string {
 	if len(patterns) == 0 {
@@ -31,6 +39,24 @@ func MatchSlice(text string, patterns []string) []string {
 		return result
 	}
 }
+
+
+// MatchOneOf match one of the patterns
+func MatchOneOf(text string, patterns ...string) []string {
+	var (
+		re    *regexp.Regexp
+		value []string
+	)
+	for _, pattern := range patterns {
+		re = regexp.MustCompile(pattern)
+		value = re.FindStringSubmatch(text)
+		if len(value) > 0 {
+			return value
+		}
+	}
+	return nil
+}
+
 
 // Min return min
 func Min(a, b int) int {
