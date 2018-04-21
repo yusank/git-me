@@ -112,22 +112,43 @@ func RequestWithRetry(url string, header map[string]string) (resp *http.Response
 	return
 }
 
-// GetContent -
-func GetContent(url string, header map[string]string) ([]byte, error) {
-	fmt.Printf("GetContent:%s\n", url)
+func GetRequestStr(url string, refer string) string {
+	fmt.Printf("GetRequest:%s\n", url)
+	headers := map[string]string{}
+	if refer != "" {
+		headers["Referer"] = refer
+	}
+	resp, err := Request(url, headers)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	defer resp.Body.Close()
+
+	body,err := DecodeResp(resp)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	return string(body)
+}
+
+// GetRequest -
+func GetRequest(url string, header map[string]string) ([]byte, error) {
+	fmt.Printf("GetRequest:%s\n", url)
 
 	resp, err := Request(url, header)
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	return DecodeResp(resp)
 }
 
 // DecodeResp -
 func DecodeResp(resp *http.Response) ([]byte, error) {
-	defer resp.Body.Close()
-
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 
 	"git-me/extractors"
 	"git-me/utils"
@@ -40,20 +39,7 @@ var RootCmd = &cobra.Command{
 		// init map
 		extractors.BeforeRun()
 
-		isMatch := false
-		for k,v := range extractors.TransferMap {
-			if strings.Contains(uri, k) {
-				fmt.Println(uri)
-				isMatch = true
-				extractors.Foo(uri,OutputDir,v)
-				break
-			}
-		}
-
-		if !isMatch {
-			fmt.Println("I am very sorry.I can't parese this kind of url yet. but I still try to download it.")
-			extractors.Foo(uri,OutputDir, extractors.TransferMap["general"])
-		}
+		extractors.MatchUrl(uri, OutputDir)
 	},
 }
 

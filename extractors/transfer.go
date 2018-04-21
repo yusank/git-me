@@ -1,12 +1,16 @@
 package extractors
 
 import (
+	"net/url"
+	"log"
 	"git-me/common"
 	"git-me/extractors/netease"
 	"git-me/extractors/xiami"
 	"git-me/extractors/youku"
 	"git-me/extractors/youtube"
 	"git-me/extractors/general"
+	"git-me/utils"
+	"fmt"
 )
 
 type CommonDownLoad func(url, outputDir string)
@@ -29,4 +33,40 @@ func Foo(uri,output string, implement interface{}) {
 		"output":output,
 	}
 	common.DownloadByUrl(implement.(common.VideoExtractor), param)
+}
+
+func MatchUrl(videoURL,outputPath string) {
+	var (
+		domain string
+	 downloader interface{}
+	 found bool
+
+	)
+
+	bilibiliShortLink := utils.MatchOneOf(videoURL, `^(av|ep)\d+`)
+	if bilibiliShortLink != nil {
+		bilibiliURL := map[string]string{
+			"av": "https://www.bilibili.com/video/",
+			"ep": "https://www.bilibili.com/bangumi/play/",
+		}
+
+		domain = "bilibili"
+		videoURL = bilibiliURL[bilibiliShortLink[1]] + videoURL
+	} else {
+		u, err := url.ParseRequestURI(videoURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		domain = utils.Domain(u.Host)
+	}
+
+
+	downloader, found = TransferMap[domain]
+	if !found {
+		fmt.Println("I am very sorry.I can't parese this kind of url yet. but I still try to download it.")
+		downloader = TransferMap["general"]
+
+	}
+
+	Foo(videoURL,outputPath, downloader)
 }

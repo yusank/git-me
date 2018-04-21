@@ -109,13 +109,16 @@ func (yk BasicInfo) Download(url string) (data common.VideoData, err error) {
 		log.Fatal(yk.Data.Error.Note)
 	}
 	urls, size, quality := yk.genData()
+	format := common.FormatData{
+		URLs:    urls,
+		Size:    size,
+		Quality: quality,
+	}
 	data = common.VideoData{
 		Site:    "优酷 youku.com",
 		Title:   title,
 		Type:    "video",
-		URLs:    urls,
-		Size:    size,
-		Quality: quality,
+		Formats: []common.FormatData{format},
 	}
 
 	return

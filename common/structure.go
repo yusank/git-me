@@ -14,8 +14,17 @@ type VideoData struct {
 	// [URLData: {URL, Size, Ext}, ...]
 	// Some video files have multiple fragments
 	// and support for downloading multiple image files at once
-	URLs    []URLData
-	Size    int64
+	Formats []FormatData
 	Type    string
+}
+
+
+// FormatData data struct of every format
+type FormatData struct {
+	// [URLData: {URL, Size, Ext}, ...]
+	// Some video files have multiple fragments
+	// and support for downloading multiple image files at once
+	URLs    []URLData
 	Quality string
+	Size    int64 // total size of all urls
 }
