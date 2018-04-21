@@ -7,7 +7,7 @@ import (
 
 // LoadJSON unmarshal json to go interface
 func LoadJSON(url string, header map[string]string) (*simplejson.Json, error) {
-	body, err := GetContent(url, header)
+	body, err := GetRequest(url, header)
 	if err != nil {
 		return nil, err
 	}

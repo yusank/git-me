@@ -31,11 +31,10 @@ func (gn BasicInfo) Download(url string) (vid common.VideoData, err error) {
 		Ext:  ext,
 	}
 
+	format := common.FormatData{URLs:[]common.URLData{urlData}}
 	vid.Site = ""
 	vid.Title = utils.FileName(exts[0])
-	vid.Size = consts.DefaultSize
-	vid.Quality = consts.DefaultText
-	vid.URLs = append(vid.URLs, urlData)
+	vid.Formats = []common.FormatData{format}
 
 	return
 }

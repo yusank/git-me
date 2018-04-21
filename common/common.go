@@ -204,22 +204,16 @@ func UrlInfo(url string, fake bool, header map[string]string) (songType, ext str
 }
 
 func (vid VideoData) DownloadURL(refer string) error {
-	if len(vid.URLs) < 1 {
+	if len(vid.Formats) < 1 {
 		return fmt.Errorf("empty url")
 	}
-
-	if len(vid.URLs) == 1 {
-		singleMedia := vid.URLs[0]
-		outPath := path.Join(vid.OutputDir, fmt.Sprintf("%s.%s", vid.Title, singleMedia.Ext))
-		fmt.Println("start downloading...", vid.OutputDir, vid.Title, singleMedia.Ext)
-		if err := URLSave(singleMedia, outPath, refer); err != nil {
-			fmt.Println("save error:", err)
-			return err
-		}
-	} else {
+	if len(vid.Formats[0].URLs) < 1 {
+		return fmt.Errorf("empty url")
+	}
 		var wg sync.WaitGroup
 
-		for i, url := range vid.URLs {
+		for i, format := range vid.Formats {
+			for _, url := range format.URLs {
 			fmt.Println("start downloading...", url.URL)
 			outPath := path.Join(vid.OutputDir, fmt.Sprintf("%s[%d]", vid.Title, i), url.Ext)
 			if strings.Contains(refer, "mgtv") {

@@ -129,12 +129,15 @@ func youtubeDownload(uri string, result *common.VideoData) {
 		Ext:  ext,
 	}
 
+	format := common.FormatData{
+		URLs: []common.URLData{urlData},
+		Size: urlData.Size,
+		Quality:quality,
+	}
+
 	result.Site = "YouTube youtube.com"
 	result.Title = utils.FileName(title)
 	fmt.Println("[youtube] title:", result.Title)
-	result.Size = size
-	result.Quality = quality
-	result.URLs = append(result.URLs, urlData)
-
+	result.Formats = append(result.Formats, format)
 	return
 }

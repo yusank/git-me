@@ -52,38 +52,42 @@ func DownloadByURL(url string) (vid common.VideoData, err error) {
 		src = utils.Match(`<source type="[^"]+" src="([^"]+)"`, data)
 	}
 
-	urls := []string{}
-	ext := ""
-	size := 0
-
 	if len(src) > 0 {
+		urlData := []common.URLData{}
 		for _, v := range src {
 			u := common.URLData{
 				URL: v,
 				Ext: "mp4",
 			}
+			urlData = append(urlData, u)
 			vid.Type = "video"
-			vid.URLs = append(vid.URLs, u)
-			vid.Size++
 		}
+		format := common.FormatData{
+			URLs:urlData,
+			Size: int64(len(urlData)),
+		}
+		vid.Formats = []common.FormatData{format}
 	} else {
-		urls = utils.Match(`["\\'](.+)-list.m3u8["\\']`, data)
+		urls := utils.Match(`["\\'](.+)-list.m3u8["\\']`, data)
 		if len(urls) == 0 {
 			urls = utils.Match(`["\\'](.+).m3u8["\\']`, data)
 		}
+		urlData := []common.URLData{}
 		for _, v := range urls {
 			u := common.URLData{
 				URL: v,
 				Ext: "mp4",
 			}
-
+			urlData = append(urlData, u)
 			vid.Type = "video"
-			vid.URLs = append(vid.URLs, u)
-			vid.Size++
 		}
+
+		format := common.FormatData{
+			URLs:urlData,
+			Size: int64(len(urls)),
+		}
+		vid.Formats = []common.FormatData{format}
 	}
-	fmt.Println(urls)
-	fmt.Println(data, ext, size)
 
 	return
 }
