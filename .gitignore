@@ -2,3 +2,5 @@
 git-me
 .idea
 *.mp4
+*.conf
+conf/
