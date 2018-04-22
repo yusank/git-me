@@ -8,8 +8,9 @@ import (
 	"git-me/utils"
 
 	//"github.com/beevik/etree"
-	"github.com/PuerkitoBio/goquery"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 type BasicInfo struct {
@@ -34,7 +35,7 @@ func (xm BasicInfo) Prepare(Params map[string]interface{}) error {
 	return nil
 }
 
-func (xm BasicInfo) Download(url string) (common.VideoData ,error) {
+func (xm BasicInfo) Download(url string) (common.VideoData, error) {
 	// albums
 
 	// collections
@@ -54,7 +55,7 @@ func downloadSong(id, outputDir, infoOnly string) error {
 	return nil
 }
 
-func downloadMv(url string) (data common.VideoData,err error){
+func downloadMv(url string) (data common.VideoData, err error) {
 	page, err := utils.GetRequest(url, nil)
 	if err != nil {
 		return

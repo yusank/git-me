@@ -18,7 +18,6 @@ type VideoData struct {
 	Type    string
 }
 
-
 // FormatData data struct of every format
 type FormatData struct {
 	// [URLData: {URL, Size, Ext}, ...]

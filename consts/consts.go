@@ -20,4 +20,8 @@ type VideoCommon struct {
 const (
 	DefaultSize = 1024 * 64
 	DefaultText = "default"
+	// session
+	SessionUserID = "userId"
+
+	ErrCodeSuccess = iota
 )

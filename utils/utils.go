@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"runtime"
-	"strings"
 	"crypto/md5"
 	"encoding/hex"
+	"runtime"
+	"strings"
 )
 
 // FileName Converts a string to a valid filename
@@ -25,7 +25,6 @@ func FileName(name string) string {
 	}
 	return name
 }
-
 
 // Domain get the domain of given URL
 func Domain(url string) string {

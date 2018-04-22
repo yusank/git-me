@@ -14,8 +14,8 @@ import (
 )
 
 var (
-	cfgFile     string
-	OutputDir   string
+	cfgFile   string
+	OutputDir string
 )
 
 // RootCmd represents the base command when called without any subcommands

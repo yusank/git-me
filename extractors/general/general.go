@@ -12,7 +12,7 @@ import (
 	"git-me/utils"
 )
 
-type BasicInfo struct {}
+type BasicInfo struct{}
 
 func (gn BasicInfo) Prepare(params map[string]interface{}) error {
 	return nil
@@ -24,14 +24,14 @@ func (gn BasicInfo) Download(url string) (vid common.VideoData, err error) {
 	if len(exts) > 1 {
 		ext = exts[len(exts)-1]
 	}
-	
+
 	urlData := common.URLData{
 		URL:  url,
 		Size: consts.DefaultSize,
 		Ext:  ext,
 	}
 
-	format := common.FormatData{URLs:[]common.URLData{urlData}}
+	format := common.FormatData{URLs: []common.URLData{urlData}}
 	vid.Site = ""
 	vid.Title = utils.FileName(exts[0])
 	vid.Formats = []common.FormatData{format}

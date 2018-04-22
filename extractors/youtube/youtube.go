@@ -130,9 +130,9 @@ func youtubeDownload(uri string, result *common.VideoData) {
 	}
 
 	format := common.FormatData{
-		URLs: []common.URLData{urlData},
-		Size: urlData.Size,
-		Quality:quality,
+		URLs:    []common.URLData{urlData},
+		Size:    urlData.Size,
+		Quality: quality,
 	}
 
 	result.Site = "YouTube youtube.com"

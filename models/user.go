@@ -5,15 +5,36 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"git-me/db"
+	"math/rand"
+	"time"
 )
 
 type User struct {
 	Id        bson.ObjectId `json:"id" bson:"_id"`
-	Name      string        `json:"name"`
-	Password  string        `json:"-"`
+	Name      string        `json:"name" bson:"name"`
+	Nickname  string        `json:"nickname" bson:"nickname"`
+	Email     string        `json:"email" bson:"email"`
+	Password  string        `json:"-" bson:"password"`
 	HeadImg   string        `json:"headImg" bson:"headImg"`
 	CreatedAt int64         `json:"createdAt" bson:"createdAt"`
 	UpdatedAt int64         `json:"updatedAt" bson:"updatedAt"`
+}
+
+type UserRegister struct {
+	Name  string `json:"name" valid:"Required"`
+	Email string `json:"email" valid:"Required"`
+	Pass  string `json:"pass" valid:"Required"`
+}
+
+type UserLogin struct {
+	Name string `json:"name"`
+	Pass string `json:"pass"`
+}
+
+type UpdatePass struct {
+	Name    string `json:"name" valid:"Required"`
+	OldPass string `json:"oldPass" valid:"Required"`
+	NewPass string `json:"newPass" valid:"Required;MinSize(6)"`
 }
 
 const (
@@ -25,10 +46,63 @@ var UserCollection *mgo.Collection
 func PrepareUser() error {
 	UserCollection = db.Mongo.Session.DB(db.Mongo.DBName).C(CollectionNameUser)
 
-	return UserCollection.EnsureIndexKey("name")
+	idx := mgo.Index{
+		Key:    []string{"name"},
+		Unique: true,
+	}
+
+	if err := UserCollection.EnsureIndex(idx); err != nil {
+		return err
+	}
+
+	idx = mgo.Index{
+		Key:    []string{"email"},
+		Unique: true,
+	}
+
+	return UserCollection.EnsureIndex(idx)
 }
 
 func (u *User) Insert() error {
 	u.Id = bson.NewObjectId()
+	u.Nickname = RandNickname()
 	return UserCollection.Insert(u)
+}
+
+func (u *User) Update() error {
+	u.UpdatedAt = time.Now().Unix()
+	return UserCollection.Update(u.Id, u)
+}
+
+func (u *User) Get() (*User, error) {
+	query := bson.M{"name": u.Name}
+	if u.Id != "" {
+		query = bson.M{"_id": u.Id}
+	}
+
+	if err := UserCollection.Find(query).One(u); err != nil {
+		return nil, err
+	}
+
+	return u, nil
+}
+
+func RandNickname() string {
+	rand.Seed(time.Now().Unix())
+	length := 8
+	data := make([]byte, length)
+	var num int
+
+	for i := 0; i < length; i++ {
+		num = rand.Intn(57) + 65
+		for {
+			if num > 90 && num < 97 {
+				num = rand.Intn(57) + 65
+			} else {
+				break
+			}
+		}
+		data[i] = byte(num)
+	}
+	return string(data)
 }

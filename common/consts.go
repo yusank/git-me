@@ -6,7 +6,6 @@ var (
 	ErrUrlIsEmpty = errors.New("url is empty")
 )
 
-
 var (
 	// Debug debug mode
 	Debug bool

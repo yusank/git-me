@@ -1,6 +1,6 @@
 {
-  "mongoConnection":"mongo",
-  "redisHost":"",
-  "redisPort":"",
-  "redisPassword":""
+  "mongoConnection":"dba:gitMe2018@127.0.0.1:27117/gitMe",
+  "redisHost":"127.0.0.1",
+  "redisPort":"6381",
+  "redisPassword":"gitMeRedis"
 }

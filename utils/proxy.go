@@ -1,11 +1,12 @@
 package utils
 
 import (
-	"golang.org/x/net/proxy"
 	"net"
 	"net/http"
 	netURL "net/url"
 	"time"
+
+	"golang.org/x/net/proxy"
 )
 
 var (
@@ -18,8 +19,8 @@ var (
 // init http-client
 func InitHttpClient() {
 	httpClient = &http.Client{
-		Timeout:   time.Second * 100,
-		}
+		Timeout: time.Second * 100,
+	}
 	initProxy()
 }
 
