@@ -7,7 +7,7 @@ import (
 )
 
 func authFailed(ctx *context.Context) {
-	e := consts.ErrPowerLimited
+	e := consts.ErrNeedLogin
 	ctx.Output.SetStatus(e.StatusCode)
 	ctx.Output.JSON(map[string]interface{}{
 		"errcode": e.ErrorCode,

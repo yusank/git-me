@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 
-	"git-me/env"
+	"github.com/astaxie/beego"
 )
 
 var (
@@ -17,12 +17,12 @@ var (
 // InitDB init db connection
 func InitDB() (err error) {
 	// init mongo
-	if Mongo, err = NewMongoDB(env.MongoConnection, "gitMe"); err != nil {
+	if Mongo, err = NewMongoDB(beego.AppConfig.String("mongoConnection"), "gitMe"); err != nil {
 		return
 	}
 
 	// init redis
-	optionCache := NewRedisOption("tcp", fmt.Sprintf("%s:%s", env.RedisHost, env.RedisPort), env.RedisPassword)
+	optionCache := NewRedisOption("tcp", fmt.Sprintf("%s:%s", beego.AppConfig.String("redisHost"), beego.AppConfig.String("redisPort")), beego.AppConfig.String("redisPassword"))
 	optionCache.SetMaxAge(0)
 	optionCache.SetMaxLength(0)
 	if Redis, err = NewRedisDBWithOption(optionCache); err != nil {

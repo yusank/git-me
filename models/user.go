@@ -66,12 +66,13 @@ func PrepareUser() error {
 func (u *User) Insert() error {
 	u.Id = bson.NewObjectId()
 	u.Nickname = RandNickname()
+	u.CreatedAt = time.Now().Unix()
 	return UserCollection.Insert(u)
 }
 
 func (u *User) Update() error {
 	u.UpdatedAt = time.Now().Unix()
-	return UserCollection.Update(u.Id, u)
+	return UserCollection.UpdateId(u.Id, u)
 }
 
 func (u *User) Get() (*User, error) {

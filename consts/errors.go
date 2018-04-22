@@ -36,7 +36,7 @@ var (
 	ErrNilToDownload      = NewError(200, 400, "没有可下载的信息")
 	ErrNotFound           = NewError(200, 400, "搜索结果为空")
 
-	ErrPowerLimited = NewError(200, 403, "没有权限")
+	ErrNeedLogin = NewError(200, 403, "请先登录")
 )
 
 func MakeResponse(data interface{}) (ret *map[string]interface{}) {

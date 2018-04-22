@@ -7,6 +7,7 @@ import (
 	"git-me/utils"
 
 	"github.com/astaxie/beego/validation"
+	"fmt"
 )
 
 type UserController struct {
@@ -15,6 +16,7 @@ type UserController struct {
 
 func (uc *UserController) Register() {
 	var r models.UserRegister
+	fmt.Println(string(uc.Ctx.Input.RequestBody))
 	err := json.Unmarshal(uc.Ctx.Input.RequestBody, &r)
 	if err != nil {
 		uc.OnError(err)
@@ -76,7 +78,7 @@ func (uc *UserController) Login() {
 
 	uc.SetSession(consts.SessionUserID, user.Id)
 
-	uc.Data["json"] = map[string]interface{}{"code": consts.ErrCodeSuccess, "data": user}
+	uc.Data["json"] = map[string]interface{}{"errcode": consts.ErrCodeSuccess, "data": user}
 	uc.ServeJSON()
 }
 
@@ -120,7 +122,7 @@ func (uc *UserController) UpdateInfo() {
 		return
 	}
 
-	uc.JSON("success")
+	uc.JSON(oldInfo)
 }
 
 func (uc *UserController) UpdatePass() {

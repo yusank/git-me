@@ -22,6 +22,7 @@ const (
 	DefaultText = "default"
 	// session
 	SessionUserID = "userId"
-
+)
+const(
 	ErrCodeSuccess = iota
 )

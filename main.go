@@ -1,26 +1,27 @@
 package main
 
 import (
-	"git-me/db"
-	"git-me/env"
-	"log"
 	"os"
+
+	"git-me/db"
+	_ "git-me/routers"
 
 	"github.com/astaxie/beego"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		panic("env param is nil")
+	envParam := ""
+	if len(os.Args) == 2 {
+		envParam = os.Args[1]
+	}
+	//logger.Printf("environment is [%s]", envParam)
+
+	if envParam == "prod" {
+		beego.BConfig.RunMode = "prod"
+	} else {
+		beego.BConfig.RunMode = "dev"
 	}
 
-	envParam := os.Args[1]
-	log.Println("run env:", envParam)
-
-	// Init Env
-	if err := env.InitEnv(envParam); err != nil {
-		panic(err)
-	}
 
 	// InitDB
 	if err := db.InitDB(); err != nil {

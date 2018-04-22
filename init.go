@@ -5,5 +5,9 @@ import (
 )
 
 func Init() error {
-	return models.PrepareUser()
+	if err :=  models.PrepareUser();err != nil {
+		return err
+	}
+
+	return models.PrepareHistory()
 }
