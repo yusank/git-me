@@ -31,7 +31,7 @@ func AddToAnonUser(ip string) error {
 	return nil
 }
 
-func IsDisabled(ip string) bool {
+func IsBlocked(ip string) bool {
 	has, err := db.Redis.SisMember(TimesRunOutUser, ip)
 	if err != nil {
 		return false

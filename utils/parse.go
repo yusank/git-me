@@ -8,12 +8,13 @@ import (
 )
 
 // GetDoc return Document object of the HTML string
-func GetDoc(html string) *goquery.Document {
+func GetDoc(html string) (*goquery.Document, error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return nil, err
 	}
-	return doc
+	return doc, nil
 }
 
 // Title get title

@@ -46,7 +46,8 @@ func genAPI(aid, cid string, bangumi bool, seasonType string) string {
 		json.Unmarshal([]byte(utoken), &t)
 		if t.Code != 0 {
 			log.Println(common.Cookie)
-			log.Fatal("Cookie error: ", t.Message)
+			log.Println("Cookie error: ", t.Message)
+			return ""
 		}
 		utoken = t.Data.Token
 	}
@@ -55,14 +56,14 @@ func genAPI(aid, cid string, bangumi bool, seasonType string) string {
 		// qn=0 flag makes the CDN address different every time
 		// quality=116(1080P 60) is the highest quality so far
 		params = fmt.Sprintf(
-			"appkey=%s&cid=%s&module=bangumi&otype=json&qn=116&quality=116&season_type=%s&type=",
-			appKey, cid, seasonType,
+			"appkey=%s&cid=%s&module=bangumi&otype=json&qn=%s&quality=%s&season_type=%s&type=",
+			appKey, cid, quality, quality, seasonType,
 		)
 		baseAPIURL = bilibiliBangumiAPI
 	} else {
 		params = fmt.Sprintf(
-			"appkey=%s&cid=%s&otype=json&qn=116&quality=116&type=",
-			appKey, cid,
+			"appkey=%s&cid=%s&otype=json&qn=%s&quality=%s&type=",
+			appKey, cid, quality, quality,
 		)
 		baseAPIURL = bilibiliAPI
 	}
@@ -127,8 +128,8 @@ func (bl BasicInfo) Download(url string) (vid common.VideoData, err error) {
 	html := utils.GetRequestStr(url, referer)
 	if !common.Playlist {
 		options.HTML = html
-		data, err := getMultiPageData(html)
-		if err == nil && !options.Bangumi {
+		data, err1 := getMultiPageData(html)
+		if err1 == nil && !options.Bangumi {
 			// handle URL that has a playlist, mainly for unified titles
 			// <h1> tag does not include subtitles
 			// bangumi doesn't need this
@@ -153,6 +154,7 @@ func (bl BasicInfo) Download(url string) (vid common.VideoData, err error) {
 		}
 		bilibiliDownload(url, options, result)
 		vid = *result
+		err = err1
 		return
 	}
 	if options.Bangumi {
@@ -165,11 +167,12 @@ func (bl BasicInfo) Download(url string) (vid common.VideoData, err error) {
 			)
 		}
 	} else {
-		data, err := getMultiPageData(html)
-		if err != nil {
+		data, err1 := getMultiPageData(html)
+		if err1 != nil {
 			// this page has no playlist
 			options.HTML = html
 			bilibiliDownload(url, options, result)
+			err = err1
 			return
 		}
 		// https://www.bilibili.com/video/av20827366/?p=1
@@ -217,7 +220,10 @@ func bilibiliDownload(url string, options bilibiliOptions, result *common.VideoD
 	json.Unmarshal([]byte(apiData), &dataDict)
 
 	// get the title
-	doc := utils.GetDoc(html)
+	doc, err := utils.GetDoc(html)
+	if err != nil {
+		return nil
+	}
 	title := utils.Title(doc)
 	if options.Subtitle != "" {
 		title = fmt.Sprintf("%s %s", title, options.Subtitle)

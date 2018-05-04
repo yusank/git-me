@@ -5,7 +5,7 @@ import (
 )
 
 func Init() error {
-	if err :=  models.PrepareUser();err != nil {
+	if err := models.PrepareUser(); err != nil {
 		return err
 	}
 

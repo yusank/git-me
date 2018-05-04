@@ -6,8 +6,8 @@ import (
 	"git-me/models"
 	"git-me/utils"
 
-	"github.com/astaxie/beego/validation"
 	"fmt"
+	"github.com/astaxie/beego/validation"
 )
 
 type UserController struct {
@@ -72,7 +72,7 @@ func (uc *UserController) Login() {
 
 	passMd5 := utils.StringMd5(l.Pass)
 	if passMd5 != user.Password {
-		uc.OnCustomError(consts.ErrInvalidAcountOrPwd)
+		uc.OnCustomError(consts.ErrInvalidAccountOrPwd)
 		return
 	}
 

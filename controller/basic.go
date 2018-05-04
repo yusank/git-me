@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/astaxie/beego"
+	"strings"
 )
 
 type BasicController struct {
@@ -31,4 +32,18 @@ func (this *BasicController) JSON(data interface{}) {
 
 func (this *BasicController) OnError(err error) {
 	this.OnCustomError(consts.MakeError(err))
+}
+
+func (this *BasicController) GetIp() string {
+	ips := this.Ctx.Input.Proxy()
+	if len(ips) > 0 && ips[0] != "" {
+		return ips[0]
+	}
+
+	ips = strings.Split(this.Ctx.Request.RemoteAddr, ":")
+	if len(ips) > 0 {
+		return ips[0]
+	}
+
+	return consts.LocalIp
 }

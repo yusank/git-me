@@ -6,6 +6,8 @@ import (
 	"git-me/db"
 	_ "git-me/routers"
 
+	"git-me/extractors"
+	"git-me/utils"
 	"github.com/astaxie/beego"
 )
 
@@ -22,7 +24,6 @@ func main() {
 		beego.BConfig.RunMode = "dev"
 	}
 
-
 	// InitDB
 	if err := db.InitDB(); err != nil {
 		panic(err)
@@ -31,6 +32,10 @@ func main() {
 	if err := Init(); err != nil {
 		panic(err)
 	}
+
+	// init downloader
+	extractors.BeforeRun()
+	utils.InitHttpClient()
 
 	beego.Run(":17717")
 }

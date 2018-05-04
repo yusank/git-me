@@ -8,17 +8,16 @@ type VideoExtractor interface {
 	Download(url string) (VideoData, error)
 }
 
-func DownloadByUrl(v VideoExtractor, params map[string]interface{}) error {
+func DownloadByUrl(v VideoExtractor, params map[string]interface{}) (vi *VideoData, err error) {
 	if err := v.Prepare(params); err != nil {
-		return err
+		return nil, err
 	}
 
 	vid, err := v.Download(params["url"].(string))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	vid.OutputDir = params["output"].(string)
-
-	return vid.DownloadURL(params["url"].(string))
+	vi = &vid
+	return
 }

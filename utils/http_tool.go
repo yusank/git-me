@@ -84,9 +84,9 @@ func Request(url string, header map[string]string) (*http.Response, error) {
 		req.Header.Set("Cookie", cookie)
 	}
 
-	for k, v := range FakeHeader {
-		req.Header.Set(k, v)
-	}
+	//for k, v := range FakeHeader {
+	//	req.Header.Set(k, v)
+	//}
 	req.Header.Set("Referer", url)
 
 	for k, v := range header {

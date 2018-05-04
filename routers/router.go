@@ -29,6 +29,9 @@ func init() {
 			beego.NSRouter("/info", &controller.UserController{}, "post:UpdateInfo"),
 			beego.NSRouter("/pass", &controller.UserController{}, "post:UpdatePass"),
 		),
+		beego.NSNamespace("/download",
+			beego.NSRouter("/vid", &controller.DownloaderController{}, "post:ParseVideo"),
+		),
 	)
 
 	beego.AddNamespace(ns)

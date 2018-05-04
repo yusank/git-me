@@ -13,7 +13,6 @@ func LoadJSON(url string, header map[string]string) (*simplejson.Json, error) {
 		return nil, err
 	}
 
-	fmt.Println(len(body))
 	fmt.Println(string(body))
 	return simplejson.NewJson(body)
 	// var f interface{}

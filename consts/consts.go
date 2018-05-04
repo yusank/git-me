@@ -22,7 +22,8 @@ const (
 	DefaultText = "default"
 	// session
 	SessionUserID = "userId"
+	LocalIp       = "127.0.0.1"
 )
-const(
+const (
 	ErrCodeSuccess = iota
 )

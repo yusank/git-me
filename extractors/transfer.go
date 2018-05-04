@@ -2,15 +2,17 @@ package extractors
 
 import (
 	"fmt"
-	"git-me/common"
+	"net/url"
+
 	"git-me/extractors/general"
 	"git-me/extractors/netease"
 	"git-me/extractors/xiami"
 	"git-me/extractors/youku"
 	"git-me/extractors/youtube"
+
+	"git-me/common"
+	"git-me/extractors/bilibili"
 	"git-me/utils"
-	"log"
-	"net/url"
 )
 
 type CommonDownLoad func(url, outputDir string)
@@ -24,18 +26,22 @@ func BeforeRun() {
 	TransferMap["youku"] = youku.BasicInfo{}
 	TransferMap["youtube"] = youtube.BasicInfo{}
 	TransferMap["xiami"] = xiami.BasicInfo{}
+	TransferMap["bilibili"] = bilibili.BasicInfo{}
 	TransferMap["general"] = general.BasicInfo{}
 }
 
-func Foo(uri, output string, implement interface{}) {
+func Foo(uri string, implement interface{}) (vi *common.VideoData, err error) {
 	param := map[string]interface{}{
-		"url":    uri,
-		"output": output,
+		"url": uri,
 	}
-	common.DownloadByUrl(implement.(common.VideoExtractor), param)
+	return common.DownloadByUrl(implement.(common.VideoExtractor), param)
 }
 
-func MatchUrl(videoURL, outputPath string) {
+func MatchUrl(videoURL string) (vi *common.VideoData, err error) {
+	if videoURL == "" {
+		return nil, fmt.Errorf("nil url")
+	}
+
 	var (
 		domain     string
 		downloader interface{}
@@ -54,9 +60,10 @@ func MatchUrl(videoURL, outputPath string) {
 	} else {
 		u, err := url.ParseRequestURI(videoURL)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		domain = utils.Domain(u.Host)
+		fmt.Println(domain)
 	}
 
 	downloader, found = TransferMap[domain]
@@ -66,5 +73,5 @@ func MatchUrl(videoURL, outputPath string) {
 
 	}
 
-	Foo(videoURL, outputPath, downloader)
+	return Foo(videoURL, downloader)
 }

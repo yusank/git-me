@@ -101,12 +101,17 @@ func (yk BasicInfo) genData() ([]common.URLData, int64, string) {
 func (yk BasicInfo) Download(url string) (data common.VideoData, err error) {
 	html := string(utils.GetDecodeHTML(url, nil))
 	// get the title
-	doc := utils.GetDoc(html)
+	doc, err := utils.GetDoc(html)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	title := utils.Title(doc)
 	vid := utils.MatchOneOf(url, `id_(.+?).html`)[1]
 	yk.ups(vid)
 	if yk.Data.Error.Code != 0 {
-		log.Fatal(yk.Data.Error.Note)
+		log.Println(yk.Data.Error.Note)
+		return
 	}
 	urls, size, quality := yk.genData()
 	format := common.FormatData{

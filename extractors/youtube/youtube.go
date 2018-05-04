@@ -50,7 +50,8 @@ func (yt BasicInfo) Download(url string) (vid common.VideoData, err error) {
 	}
 	listID := utils.MatchOneOf(url, `(list|p)=([^/&]+)`)[2]
 	if listID == "" {
-		log.Fatal("Can't get list ID from URL")
+		log.Println("Can't get list ID from URL")
+		return
 	}
 	html := utils.GetDecodeHTML("https://www.youtube.com/playlist?list="+listID, nil)
 	// "videoId":"OQxX8zgyzuM","thumbnail"
@@ -78,7 +79,8 @@ func youtubeDownload(uri string, result *common.VideoData) {
 		`v/([^/?]+)`,
 	)
 	if vid == nil {
-		log.Fatal("Can't find vid")
+		log.Println("Can't find vid")
+		return
 	}
 	fmt.Println("[vid]", vid)
 	videoURL := fmt.Sprintf(
