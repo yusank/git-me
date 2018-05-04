@@ -127,8 +127,8 @@ func (bl BasicInfo) Download(url string) (vid common.VideoData, err error) {
 	html := utils.GetRequestStr(url, referer)
 	if !common.Playlist {
 		options.HTML = html
-		data, err := getMultiPageData(html)
-		if err == nil && !options.Bangumi {
+		data, err1 := getMultiPageData(html)
+		if err1 == nil && !options.Bangumi {
 			// handle URL that has a playlist, mainly for unified titles
 			// <h1> tag does not include subtitles
 			// bangumi doesn't need this
@@ -153,6 +153,7 @@ func (bl BasicInfo) Download(url string) (vid common.VideoData, err error) {
 		}
 		bilibiliDownload(url, options, result)
 		vid = *result
+		err  = err1
 		return
 	}
 	if options.Bangumi {
@@ -165,11 +166,12 @@ func (bl BasicInfo) Download(url string) (vid common.VideoData, err error) {
 			)
 		}
 	} else {
-		data, err := getMultiPageData(html)
-		if err != nil {
+		data, err1 := getMultiPageData(html)
+		if err1 != nil {
 			// this page has no playlist
 			options.HTML = html
 			bilibiliDownload(url, options, result)
+			err = err1
 			return
 		}
 		// https://www.bilibili.com/video/av20827366/?p=1

@@ -11,6 +11,7 @@ import (
 	"git-me/extractors/general"
 	"git-me/utils"
 	"fmt"
+	"git-me/extractors/bilibili"
 )
 
 type CommonDownLoad func(url, outputDir string)
@@ -25,6 +26,7 @@ func BeforeRun() {
 	TransferMap["youtube"] = youtube.BasicInfo{}
 	TransferMap["xiami"] = xiami.BasicInfo{}
 	TransferMap["general"] = general.BasicInfo{}
+	TransferMap["bilibili"] = bilibili.BasicInfo{}
 }
 
 func Foo(uri,output string, implement interface{}) {
