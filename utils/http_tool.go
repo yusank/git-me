@@ -8,6 +8,9 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"io"
+	"path/filepath"
+	"log"
 )
 
 var (
@@ -28,7 +31,7 @@ var (
 
 // GetDecodeHTML request url and read body
 func GetDecodeHTML(url string, header map[string]string) []byte {
-	response, err := Request(url, header)
+	response, err := HttpGet(url, header)
 	if err != nil {
 		fmt.Println(err)
 		return nil
@@ -51,21 +54,50 @@ func Headers(url, refer string) http.Header {
 	headers := map[string]string{
 		"Referer": refer,
 	}
-	res, _ := Request(url, headers)
+	res, _ := HttpGet(url, headers)
 	defer res.Body.Close()
 	return res.Header
 }
 
 // Size get size of the url
-func FileSize(url, refer string) int64 {
+func DownloadFileSize(url, refer string) int64 {
 	h := Headers(url, refer)
 	s := h.Get("Content-Length")
 	size, _ := strconv.ParseInt(s, 10, 64)
 	return size
 }
 
-// Request - get http response
-func Request(url string, header map[string]string) (*http.Response, error) {
+
+// FilePath gen valid file path
+func FilePath(name, ext, output string, escape bool) string {
+	var outputPath string
+	if output != "" {
+		_, err := os.Stat(output)
+		if err != nil && os.IsNotExist(err) {
+			log.Println("found err", output)
+			log.Fatal(err)
+		}
+	}
+	fileName := fmt.Sprintf("%s.%s", name, ext)
+	if escape {
+		fileName = FileName(fileName)
+	}
+	outputPath = filepath.Join(output, fileName)
+	return outputPath
+}
+
+// FileSize return the file size of the specified path file
+func FileSize(filePath string) (int64, bool) {
+	file, err := os.Stat(filePath)
+	if err != nil && os.IsNotExist(err) {
+		return 0, false
+	}
+	return file.Size(), true
+}
+
+
+// HttpGetByte - get http response
+func HttpGet(url string, header map[string]string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -103,7 +135,7 @@ func Request(url string, header map[string]string) (*http.Response, error) {
 
 func RequestWithRetry(url string, header map[string]string) (resp *http.Response, err error) {
 	for i := 0; i < 3; i++ {
-		resp, err = Request(url, header)
+		resp, err = HttpGet(url, header)
 		if err != nil || resp == nil {
 			time.Sleep(500 * time.Millisecond)
 			err = nil
@@ -113,32 +145,31 @@ func RequestWithRetry(url string, header map[string]string) (resp *http.Response
 }
 
 func GetRequestStr(url string, refer string) string {
-	fmt.Printf("GetRequest:%s\n", url)
+	fmt.Printf("HttpGetByte:%s\n", url)
 	headers := map[string]string{}
 	if refer != "" {
 		headers["Referer"] = refer
 	}
-	resp, err := Request(url, headers)
+	resp, err := HttpGet(url, headers)
+	defer resp.Body.Close()
 	if err != nil {
 		fmt.Println(err)
 		return ""
 	}
-	defer resp.Body.Close()
 
 	body,err := DecodeResp(resp)
 	if err != nil {
 		fmt.Println(err)
 		return ""
 	}
-
 	return string(body)
 }
 
-// GetRequest -
-func GetRequest(url string, header map[string]string) ([]byte, error) {
-	fmt.Printf("GetRequest:%s\n", url)
+// HttpGetByte -
+func HttpGetByte(url string, header map[string]string) ([]byte, error) {
+	fmt.Printf("HttpGetByte:%s\n", url)
 
-	resp, err := Request(url, header)
+	resp, err := HttpGet(url, header)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +180,13 @@ func GetRequest(url string, header map[string]string) ([]byte, error) {
 
 // DecodeResp -
 func DecodeResp(resp *http.Response) ([]byte, error) {
-	body, err := ioutil.ReadAll(resp.Body)
+	var reader io.ReadCloser
+	if resp.Header.Get("Content-Encoding") == "gzip" {
+		reader, _ = gzip.NewReader(resp.Body)
+	} else {
+		reader = resp.Body
+	}
+	body, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}

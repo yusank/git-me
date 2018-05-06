@@ -20,5 +20,6 @@ func DownloadByUrl(v VideoExtractor, params map[string]interface{}) error {
 
 	vid.OutputDir = params["output"].(string)
 
-	return vid.DownloadURL(params["url"].(string))
+	vid.Download(params["url"].(string))
+	return nil
 }

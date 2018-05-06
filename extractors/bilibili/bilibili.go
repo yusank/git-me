@@ -31,13 +31,14 @@ type BasicInfo struct {
 	URL string
 }
 
-func genAPI(aid, cid string, bangumi bool, seasonType string) string {
+var utoken string
+
+func genAPI(aid, cid string, bangumi bool, quality string, seasonType string) string {
 	var (
 		baseAPIURL string
 		params     string
 	)
-	utoken := ""
-	if common.Cookie != "" {
+	if common.Cookie != "" && utoken == "" {
 		utoken = utils.GetRequestStr(
 			fmt.Sprintf("%said=%s&cid=%s", bilibiliTokenAPI, aid, cid),
 			referer,
@@ -55,14 +56,14 @@ func genAPI(aid, cid string, bangumi bool, seasonType string) string {
 		// qn=0 flag makes the CDN address different every time
 		// quality=116(1080P 60) is the highest quality so far
 		params = fmt.Sprintf(
-			"appkey=%s&cid=%s&module=bangumi&otype=json&qn=116&quality=116&season_type=%s&type=",
-			appKey, cid, seasonType,
+			"appkey=%s&cid=%s&module=bangumi&otype=json&qn=%s&quality=%s&season_type=%s&type=",
+			appKey, cid, quality, quality, seasonType,
 		)
 		baseAPIURL = bilibiliBangumiAPI
 	} else {
 		params = fmt.Sprintf(
-			"appkey=%s&cid=%s&otype=json&qn=116&quality=116&type=",
-			appKey, cid,
+			"appkey=%s&cid=%s&otype=json&qn=%s&quality=%s&type=",
+			appKey, cid, quality, quality,
 		)
 		baseAPIURL = bilibiliAPI
 	}
@@ -75,6 +76,7 @@ func genAPI(aid, cid string, bangumi bool, seasonType string) string {
 	}
 	return api
 }
+
 
 func genURL(durl []dURLData) ([]common.URLData, int64) {
 	var (
@@ -213,10 +215,34 @@ func bilibiliDownload(url string, options bilibiliOptions, result *common.VideoD
 	if options.Bangumi {
 		seasonType = utils.MatchOneOf(html, `"season_type":(\d+)`)[1]
 	}
-	api := genAPI(aid, cid, options.Bangumi, seasonType)
-	apiData := utils.GetRequestStr(api, referer)
-	var dataDict bilibiliData
-	json.Unmarshal([]byte(apiData), &dataDict)
+
+	format := map[string]common.FormatData{}
+	var defaultQuality string
+	for _, q := range []string{"15", "32", "64", "80", "112", "74", "116"} {
+		apiURL := genAPI(aid, cid, options.Bangumi, q, seasonType)
+		jsonString := utils.GetRequestStr(apiURL, referer)
+		var data bilibiliData
+		json.Unmarshal([]byte(jsonString), &data)
+
+		if _, ok := format[strconv.Itoa(data.Quality)]; ok {
+			continue
+		}
+
+		urls, size := genURL(data.DURL)
+		format[q] = common.FormatData{
+			URLs:    urls,
+			Size:    size,
+			Quality: quality[data.Quality],
+		}
+		defaultQuality = q // last one is the best quality
+	}
+	format["default"] = format[defaultQuality]
+	delete(format, defaultQuality)
+
+	var formats []common.FormatData
+	for _, v := range format {
+		formats = append(formats,v)
+	}
 
 	// get the title
 	doc := utils.GetDoc(html)
@@ -225,15 +251,9 @@ func bilibiliDownload(url string, options bilibiliOptions, result *common.VideoD
 		title = fmt.Sprintf("%s %s", title, options.Subtitle)
 	}
 
-	urls, size := genURL(dataDict.DURL)
-	format := common.FormatData{
-		URLs:    urls,
-		Size:    size,
-		Quality: quality[dataDict.Quality],
-	}
 	result.Site = "哔哩哔哩 bilibili.com"
 	result.Title = title
 	result.Type = "video"
-	result.Formats = append(result.Formats, format)
+	result.Formats = formats
 	return result
 }

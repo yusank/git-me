@@ -45,17 +45,9 @@ func (xm BasicInfo) Download(url string) (common.VideoData ,error) {
 	return downloadMv(url)
 }
 
-func downloadSong(id, outputDir, infoOnly string) error {
-	url := fmt.Sprintf("http://www.xiami.com/song/playlist/id/%s/object_name/default/object_id/0", id)
-	_, err := utils.GetRequest(url, common.FakeHeader)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 
 func downloadMv(url string) (data common.VideoData,err error){
-	page, err := utils.GetRequest(url, nil)
+	page, err := utils.HttpGetByte(url, nil)
 	if err != nil {
 		return
 	}
@@ -84,7 +76,7 @@ func downloadMv(url string) (data common.VideoData,err error){
 	}
 
 	apiUrl := fmt.Sprintf("http://cloud.video.taobao.com/videoapi/info.php?vid=%s&uid=%s", vid, uid)
-	result, err := utils.GetRequest(apiUrl, nil)
+	result, err := utils.HttpGetByte(apiUrl, nil)
 	if err != nil {
 		return
 	}
