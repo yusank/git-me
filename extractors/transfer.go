@@ -28,6 +28,7 @@ func BeforeRun() {
 	TransferMap["xiami"] = xiami.BasicInfo{}
 	TransferMap["bilibili"] = bilibili.BasicInfo{}
 	TransferMap["general"] = general.BasicInfo{}
+	TransferMap["bilibili"] = bilibili.BasicInfo{}
 }
 
 func Foo(uri string, implement interface{}) (vi *common.VideoData, err error) {

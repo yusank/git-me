@@ -165,7 +165,7 @@ func UrlInfo(url string, fake bool, header map[string]string) (songType, ext str
 		return
 	}
 
-	response, err = utils.Request(url, header)
+	response, err = utils.HttpGet(url, header)
 	if err != nil {
 		return
 	}
@@ -215,7 +215,7 @@ func (vid VideoData) DownloadURL(refer string) error {
 	for i, format := range vid.Formats {
 		for _, url := range format.URLs {
 			fmt.Println("start downloading...", url.URL)
-			outPath := path.Join(vid.OutputDir, fmt.Sprintf("%s[%d]", vid.Title, i), url.Ext)
+			outPath := path.Join(vid.OutputDir, fmt.Sprintf("%s[%d].%s", vid.Title, i, url.Ext))
 			if strings.Contains(refer, "mgtv") {
 				// Too many threads cause mgtv to return HTTP 403 error
 				URLSave(url, outPath, refer)
@@ -317,7 +317,7 @@ func URLSave(url URLData, path, refer string) error {
 				timeOut++
 			}
 		} else {
-			resp, err = utils.Request(url.URL, tmpHeaders)
+			resp, err = utils.HttpGet(url.URL, tmpHeaders)
 			if resp != nil {
 				fmt.Println("may be i got it")
 			}
@@ -415,7 +415,7 @@ func URLSize(url string, fake bool, header map[string]string) (int64, error) {
 		header = FakeHeader
 	}
 
-	resp, err := utils.Request(url, header)
+	resp, err := utils.HttpGet(url, header)
 	if err != nil {
 		return 0, err
 	}

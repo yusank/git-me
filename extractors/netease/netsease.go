@@ -1,3 +1,6 @@
+/*
+	放弃
+*/
 package netease
 
 import (
