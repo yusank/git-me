@@ -8,6 +8,7 @@ import (
 
 	"git-me/extractors"
 	"git-me/utils"
+
 	"github.com/astaxie/beego"
 )
 
@@ -29,7 +30,8 @@ func main() {
 		panic(err)
 	}
 
-	if err := Init(); err != nil {
+	// Init models
+	if err := InitModels(); err != nil {
 		panic(err)
 	}
 

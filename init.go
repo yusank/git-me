@@ -4,8 +4,12 @@ import (
 	"git-me/models"
 )
 
-func Init() error {
+func InitModels() error {
 	if err := models.PrepareUser(); err != nil {
+		return err
+	}
+
+	if err := models.PrepateTaskInfo(); err != nil {
 		return err
 	}
 
