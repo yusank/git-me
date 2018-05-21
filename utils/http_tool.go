@@ -3,14 +3,14 @@ package utils
 import (
 	"compress/gzip"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
-	"io"
-	"path/filepath"
-	"log"
 )
 
 var (
@@ -67,7 +67,6 @@ func DownloadFileSize(url, refer string) int64 {
 	return size
 }
 
-
 // FilePath gen valid file path
 func FilePath(name, ext, output string, escape bool) string {
 	var outputPath string
@@ -95,7 +94,6 @@ func FileSize(filePath string) (int64, bool) {
 	return file.Size(), true
 }
 
-
 // HttpGetByte - get http response
 func HttpGet(url string, header map[string]string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
@@ -116,8 +114,8 @@ func HttpGet(url string, header map[string]string) (*http.Response, error) {
 		req.Header.Set("Cookie", cookie)
 	}
 
-	for k,v := range FakeHeader {
-		req.Header.Set(k,v)
+	for k, v := range FakeHeader {
+		req.Header.Set(k, v)
 	}
 	req.Header.Set("Referer", url)
 
@@ -157,7 +155,7 @@ func GetRequestStr(url string, refer string) string {
 		return ""
 	}
 
-	body,err := DecodeResp(resp)
+	body, err := DecodeResp(resp)
 	if err != nil {
 		fmt.Println(err)
 		return ""
