@@ -13,7 +13,7 @@ var (
 	// HttpProxy HTTP proxy
 	HttpProxy string
 	// Socks5Proxy SOCKS5 proxy
-	Socks5Proxy string = "127.0.0.1:1086"
+	Socks5Proxy string
 )
 
 // init http-client

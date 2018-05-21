@@ -30,7 +30,7 @@ func init() {
 			beego.NSRouter("/pass", &controller.UserController{}, "post:UpdatePass"),
 		),
 		beego.NSNamespace("/download",
-			beego.NSRouter("/vid", &controller.DownloaderController{}, "post:ParseVideo"),
+			beego.NSRouter("/vid", &controller.DownloaderController{}, "get:ParseVideo"),
 		),
 	)
 
