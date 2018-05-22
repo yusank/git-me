@@ -88,6 +88,17 @@ func (u *User) Get() (*User, error) {
 	return u, nil
 }
 
+func GetUserById(id string) (u *User, err error) {
+	u = new(User)
+	query := bson.M{"_id": bson.ObjectIdHex(id)}
+	err = UserCollection.Find(query).One(u)
+	if err == mgo.ErrNotFound {
+		return nil, nil
+	}
+
+	return
+}
+
 func RandNickname() string {
 	rand.Seed(time.Now().Unix())
 	length := 8

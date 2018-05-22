@@ -28,11 +28,26 @@ const (
 	CollectionTask = "task"
 )
 
-func PrepateTaskInfo() error {
+const (
+	TaskStatusDefault = iota
+	TaskStatusDownlaoding
+	TaskStatusFail
+	TaskStatusFinish
+)
+
+func PrepareTaskInfo() error {
 	TaskInfoCollection = db.Mongo.Session.DB(db.Mongo.DBName).C(CollectionTask)
 
 	idx := mgo.Index{
 		Key: []string{"userId"},
+	}
+
+	if err := TaskInfoCollection.EnsureIndex(idx); err != nil {
+		return err
+	}
+
+	idx = mgo.Index{
+		Key: []string{"url"},
 	}
 
 	return TaskInfoCollection.EnsureIndex(idx)
@@ -47,4 +62,36 @@ func (task *TaskInfo) Insert() error {
 func (task *TaskInfo) Update() error {
 	task.UpdateAt = time.Now().Unix()
 	return TaskInfoCollection.UpdateId(task.Id, task)
+}
+
+func (task *TaskInfo) Delete() error {
+	return TaskInfoCollection.RemoveId(task.Id)
+}
+
+func ListTaskInfo(userId string) (list []*TaskInfo, err error) {
+	list = make([]*TaskInfo, 0)
+	err = TaskInfoCollection.FindId(bson.ObjectIdHex(userId)).All(&list)
+
+	return
+}
+
+func ListUnFinishedTaskInfo(userId string) (list []*TaskInfo, err error) {
+	list = make([]*TaskInfo, 0)
+	query := bson.M{
+		"userId": bson.ObjectIdHex(userId),
+		"status": bson.M{"$ne": TaskStatusFinish},
+	}
+	err = TaskInfoCollection.FindId(query).All(&list)
+
+	return
+}
+
+func GetTaskInfoByUserAndUrl(userId, url string) (t *TaskInfo, err error) {
+	t = new(TaskInfo)
+	err = TaskInfoCollection.Find(bson.M{"userId": bson.ObjectIdHex(userId), "url": url}).One(t)
+	if err == mgo.ErrNotFound {
+		return nil, nil
+	}
+
+	return
 }

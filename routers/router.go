@@ -32,6 +32,19 @@ func init() {
 		beego.NSNamespace("/download",
 			beego.NSRouter("/vid", &controller.DownloaderController{}, "get:ParseVideo"),
 		),
+
+		beego.NSNamespace("/task",
+			beego.NSBefore(middleware.AuthLogin),
+			beego.NSRouter("/list", &controller.TaskController{}, "get:ListTask"),
+			beego.NSRouter("/add", &controller.TaskController{}, "post:AddTask"),
+			beego.NSRouter("/update", &controller.TaskController{}, "post:UpdateTask"),
+			beego.NSRouter("/del", &controller.TaskController{}, "post:DelTask"),
+		),
+
+		beego.NSNamespace("/inner-task",
+			beego.NSRouter("/list", &controller.InnerTaskController{}, "get:ListUserTasks"),
+			beego.NSRouter("/update", &controller.InnerTaskController{}, "post:HandleEvent"),
+		),
 	)
 
 	beego.AddNamespace(ns)

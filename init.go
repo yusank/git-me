@@ -9,7 +9,7 @@ func InitModels() error {
 		return err
 	}
 
-	if err := models.PrepateTaskInfo(); err != nil {
+	if err := models.PrepareTaskInfo(); err != nil {
 		return err
 	}
 
