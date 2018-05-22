@@ -6,7 +6,6 @@ var (
 	ErrUrlIsEmpty = errors.New("url is empty")
 )
 
-
 var (
 	// Debug debug mode
 	Debug bool
@@ -34,4 +33,16 @@ var (
 	ExtractedData bool
 	// The number of download thread
 	ThreadNumber int
+	// user name
+	Name string
+	// user password
+	Pass string
+)
+
+const (
+	DefaultSize = 1024 * 64
+
+	Host         = "http://45.76.169.195:17717"
+	ListRouter   = "/v1/inner-task/list"
+	UploadRouter = "/v1/inner-task/upload"
 )

@@ -5,8 +5,13 @@ import (
 	"fmt"
 	"os"
 
+	"git-me/common"
 	"git-me/extractors"
 	"git-me/utils"
+
+	"git-me/model"
+
+	"bufio"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -16,6 +21,7 @@ import (
 var (
 	cfgFile     string
 	OutputDir   string
+	inputReader *bufio.Reader
 )
 
 // RootCmd represents the base command when called without any subcommands
@@ -26,19 +32,32 @@ var RootCmd = &cobra.Command{
 	This tool has nothing to do with git or any other version control tool.
 	Git-me only focus on get media from web site to your computer.`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
+		if common.Name == "" && len(args) < 1 {
 			return errors.New("requires at least one arg")
 		}
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		uri := args[0]
 		// init http-client
 		utils.InitHttpClient()
+
 		//utils.SetProxy(ProxyPort)
 		// init map
 		extractors.BeforeRun()
 
+		tasks := handleUserTask()
+		if len(tasks) > 0 {
+			for _, v := range tasks {
+				extractors.MatchUrl(v, OutputDir)
+			}
+			return
+		}
+
+		if len(args) < 1 {
+			return
+		}
+
+		uri := args[0]
 		extractors.MatchUrl(uri, OutputDir)
 	},
 }
@@ -62,6 +81,8 @@ func init() {
 	RootCmd.Flags().StringVarP(&utils.HttpProxy, "proxyPort", "x", "", "use agency when you need.")
 	RootCmd.Flags().StringVarP(&utils.Socks5Proxy, "socketProxy", "s", "", "use agency when you need.")
 	RootCmd.Flags().StringVarP(&utils.Cookie, "cookie", "c", "", "use agency when you need.")
+	RootCmd.Flags().StringVarP(&common.Name, "name", "u", "", "account info of tool")
+	RootCmd.Flags().StringVarP(&common.Pass, "password", "p", "", "account pass.")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -88,4 +109,22 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func handleUserTask() []string {
+	if common.Name == "" || common.Pass == "" {
+		return nil
+	}
+
+	var u model.InnerTaskResp
+	u.Name = common.Name
+	u.Pass = common.Pass
+
+	urls, err := model.GetUserTask(u)
+	if err != nil {
+		fmt.Println("user info err", err)
+		return nil
+	}
+
+	return urls
 }

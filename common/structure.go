@@ -18,7 +18,6 @@ type VideoData struct {
 	Type    string
 }
 
-
 // FormatData data struct of every format
 type FormatData struct {
 	// [URLData: {URL, Size, Ext}, ...]
@@ -27,4 +26,13 @@ type FormatData struct {
 	URLs    []URLData
 	Quality string
 	Size    int64 // total size of all urls
+}
+
+type InnerTask struct {
+	Id     string `json:"id"`
+	UserId string `json:"userId"`
+	URL    string `json:"url"`
+	Status int    `json:"status"`
+	Sort   int    `json:"sort"`
+	Tp     int    `json:"tp"`
 }

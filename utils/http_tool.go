@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"compress/gzip"
 	"fmt"
 	"io"
@@ -190,4 +191,14 @@ func DecodeResp(resp *http.Response) ([]byte, error) {
 	}
 	fmt.Println(len(body))
 	return body, nil
+}
+
+func HttpPost(url string, body []byte) (resp *http.Response, err error) {
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err = httpClient.Do(req)
+	return
 }
