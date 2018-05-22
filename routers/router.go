@@ -33,6 +33,9 @@ func init() {
 			beego.NSRouter("/vid", &controller.DownloaderController{}, "get:ParseVideo"),
 		),
 
+		beego.NSNamespace("history",
+			beego.NSRouter("/list", &controller.HistoryController{}, "get:List"),
+		),
 		beego.NSNamespace("/task",
 			beego.NSBefore(middleware.AuthLogin),
 			beego.NSRouter("/list/:id", &controller.TaskController{}, "get:ListTask"),

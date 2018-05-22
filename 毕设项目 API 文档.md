@@ -1,0 +1,281 @@
+#毕设项目 API 文档
+
+[TOC]
+
+## 用户系统
+
+*所有的 POST 请求参数都会以 json 格式传输*
+
+**HOST:http://45.76.169.195:17717**
+
+###注册
+
+| 路由 | /v1/r/register               |
+| ---- | ---------------------------- |
+| 参数 | {name:"", email:"", pass:""} |
+| 方法 | POST                         |
+
+成功返回：
+
+```json
+{
+  "data": "success",
+  "errcode": 0
+}
+```
+
+
+
+### 登录
+
+| 路由 | /v1/r/login       |
+| ---- | ----------------- |
+| 参数 | {name:"",pass:""} |
+| 方法 | POST              |
+
+成功返回：
+
+```json
+{
+    "errcode": 0,
+    "data": {
+        // 用户信息
+        "id": "5adc7dad65d4406e6e984585",
+        "name": "yusank",
+        "nickname": "iwElOCeE",
+        "email": "abc@gmail.com",
+        "headImg": "",
+        "createdAt": 1524399750,
+        "updatedAt": 0
+    }
+}
+```
+
+
+
+### 登出
+
+| 路由 | /v1/user/logout |
+| ---- | --------------- |
+| 方法 | GET             |
+
+成功返回：
+
+```json
+{
+    "data": "success",
+    "errcode": 0
+}
+```
+
+
+
+### 修改用户信息
+
+| 路由 | /v1/user/info                     |
+| ---- | --------------------------------- |
+| 参数 | {name:"", headImg:"",nickname:""} |
+| 方法 | POST                              |
+
+成功返回：
+
+```json
+{
+    "errcode": 0,
+    "data": {
+        // 返回新的用户信息
+        "id": "5adc7dad65d4406e6e984585",
+        "name": "yusank",
+        "nickname": "newnikcname",
+        "email": "abc@gmail.com",
+        "headImg": "",
+        "createdAt": 1524399750,
+        "updatedAt": 0
+    }
+}
+```
+
+### 更改密码
+
+| 路由 | /v1/user/pass                     |
+| ---- | --------------------------------- |
+| 参数 | {name:"", oldPass:"", newPass:""} |
+| 方法 | POST                              |
+
+成功返回：
+
+```json
+{
+    "data": "success",
+    "errcode": 0
+}
+```
+
+
+
+## 解析URL
+
+*此接口暂停使用*
+
+| 路由 | /v1/download/vid                 |
+| ---- | -------------------------------- |
+| 参数 | {"url":"http://baidu.com/a.jpg"} |
+| 方法 | POST                             |
+
+**注：参数为 json 格式**
+
+成功返回：
+
+```json
+{
+  "data": {
+    "site": "baidu.com",	// 解析到的根域名
+    "title": "a",	// 标题
+    "formats": [
+      {
+        "urls": [	// 解析到的 url 数组，一个元素显示一行即可
+          {
+            "url": "http://baidu.com/a.jpg",
+            "size": 65536,
+            "ext": "jpg"
+          }
+        ],
+        "quality": "",	// 画质|| 清晰度
+        "size": 1	// urls 的长度
+      }
+    ],
+    "type": "image"
+  },
+  "errcode": 0
+}
+```
+
+
+
+## 历史记录
+
+| 路由 | /v1/history/list |
+| ---- | ---------------- |
+| 参数 | page=1&size=10   |
+| 方法 | get              |
+
+返回数据：
+
+```json
+{
+    "data":{
+        [
+        	"id":"123",
+        	"userId":"123",
+        	"site":"bilibili.com",
+        	"url":"http://abc.com",
+        	"size":1024,
+        	"quality":"高清",
+        	"type":"video",
+        	"createdAt":1502020220,// 创建时间
+        ],[]....
+    },
+    "errCode":0
+}
+```
+
+
+
+## 预定下载
+
+### 获取用户的预定列表
+
+| 路由 | /v1/task/list/:id |
+| ---- | ----------------- |
+| 参数 | page=1&size=10    |
+| 方法 | get               |
+
+返回值：
+
+```json
+{
+    "data":{
+        [
+        	"id":"123",
+        	"userId":"123",
+        	"status":0,// 0:未开始，1：正在下载， 2：已完成，3：下载异常
+        	"url":"http://abc.com",
+        	"sort":1,
+        	"type":"video",
+        	"createdAt":1502020220,// 创建时间
+        	"updatedAt":15003494934 // 更新时间
+        ],[]....
+    },
+    "errCode":0
+}
+```
+
+
+
+请求 通用json 结构
+
+```json
+{
+    "id":"sdds",
+    "userId":"abc",
+    "url":"http://abc.com",
+    "sort":1	//用来排序
+}
+```
+
+
+
+### 添加预定
+
+| 路由 | /v1/task/add         |
+| ---- | -------------------- |
+| 参数 | 只传 url 和 sort即可 |
+| 方法 | post                 |
+
+返回值:
+
+```json
+{
+    "data": "success",
+    "errcode": 0
+}
+```
+
+
+
+### 更新预定
+
+| 路由 | /v1/task/upadte |
+| ---- | --------------- |
+| 参数 | 传 id           |
+| 方法 | POST            |
+
+返回值:
+
+```json
+{
+    "data": "success",
+    "errcode": 0
+}
+```
+
+
+
+### 删除预定
+
+### 
+
+| 路由 | /v1/task/del |
+| ---- | ------------ |
+| 参数 | 传 id        |
+| 方法 | POST         |
+
+返回值:
+
+```json
+{
+    "data": "success",
+    "errcode": 0
+}
+```
+

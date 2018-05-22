@@ -27,3 +27,8 @@ type FormatData struct {
 	Quality string    `json:"quality"`
 	Size    int64     `json:"size"` // total size of all urls
 }
+
+type Pagination struct {
+	Page int `json:"page"`
+	Size int `json:"size"`
+}

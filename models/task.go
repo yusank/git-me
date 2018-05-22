@@ -15,7 +15,7 @@ type TaskInfo struct {
 	URL       string        `bson:"url"`
 	Status    int           `bson:"status"`
 	Sort      int           `bson:"sort"`
-	Tp        int           `bson:"tp"`
+	Type      int           `bson:"type"`
 	CreatedAt int64         `bson:"createdAt"`
 	UpdateAt  int64         `bson:"updatedAt"`
 }
@@ -68,9 +68,9 @@ func (task *TaskInfo) Delete() error {
 	return TaskInfoCollection.RemoveId(task.Id)
 }
 
-func ListTaskInfo(userId string) (list []*TaskInfo, err error) {
+func ListTaskInfo(userId string, page, size int) (list []*TaskInfo, err error) {
 	list = make([]*TaskInfo, 0)
-	err = TaskInfoCollection.FindId(bson.ObjectIdHex(userId)).All(&list)
+	err = TaskInfoCollection.FindId(bson.ObjectIdHex(userId)).Sort("createdAt").Skip((page - 1) * size).Limit(size).All(&list)
 
 	return
 }
@@ -89,6 +89,16 @@ func ListUnFinishedTaskInfo(userId string) (list []*TaskInfo, err error) {
 func GetTaskInfoByUserAndUrl(userId, url string) (t *TaskInfo, err error) {
 	t = new(TaskInfo)
 	err = TaskInfoCollection.Find(bson.M{"userId": bson.ObjectIdHex(userId), "url": url}).One(t)
+	if err == mgo.ErrNotFound {
+		return nil, nil
+	}
+
+	return
+}
+
+func GetTaskInfoById(id string) (t *TaskInfo, err error) {
+	t = new(TaskInfo)
+	err = TaskInfoCollection.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(t)
 	if err == mgo.ErrNotFound {
 		return nil, nil
 	}

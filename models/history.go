@@ -2,17 +2,23 @@ package models
 
 import (
 	"git-me/db"
+
+	"time"
+
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
 type History struct {
-	Id      bson.ObjectId `json:"id" bson:"_id"`
-	UserID  bson.ObjectId `json:"userID" bson:"userID"`
-	Site    string        `json:"site" bson:"site"`
-	URL     string        `json:"url" bson:"url"`
-	Type    int           `json:"type" bson:"type"`
-	LastUse int64         `json:"lastUse" bson:"lastUse"`
+	Id        bson.ObjectId `json:"id" bson:"_id"`
+	UserID    bson.ObjectId `json:"userId" bson:"userID"`
+	Site      string        `json:"site" bson:"site"`
+	URL       string        `json:"url" bson:"url"`
+	Size      int64         `json:"size" bson:"size"`
+	Quality   string        `json:"quality" bson:"quality"`
+	Type      int           `json:"type" bson:"type"`
+	LastUse   int64         `json:"lastUse" bson:"lastUse"`
+	CreatedAt int64         `json:"createdAt" bson:"createdAt"`
 }
 
 const (
@@ -33,5 +39,14 @@ func PrepareHistory() error {
 
 func (his *History) Insert() error {
 	his.Id = bson.NewObjectId()
+	his.CreatedAt = time.Now().Unix()
 	return HistoryCollection.Insert(his)
+}
+
+func GetHistory(userId string, page, size int) (list []*History, err error) {
+	query := bson.M{"userID": bson.ObjectIdHex(userId)}
+	list = make([]*History, 0)
+
+	err = HistoryCollection.Find(query).Sort("createdAt").Skip((page - 1) * size).Limit(size).All(&list)
+	return
 }
