@@ -17,8 +17,8 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
     #ssh $user@$prod_hosts "mkdir -p $prod_conf_dir"
 
     echo "scp"
-    scp $app $user@$prod_hosts:$prod_app_dir
-    scp $prod_conf_file $user@$prod_hosts:$prod_conf_dir
+    scp -P 21212 $app $user@$prod_hosts:$prod_app_dir
+    scp -P 21212 $prod_conf_file $user@$prod_hosts:$prod_conf_dir
 
 rm -rf $app
 echo "done"

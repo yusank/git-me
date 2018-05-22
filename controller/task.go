@@ -17,14 +17,8 @@ type TaskInfo struct {
 }
 
 func (tc *TaskController) ListTask() {
-	var req TaskInfo
-
-	if err := json.Unmarshal(tc.Ctx.Input.RequestBody, &req); err != nil {
-		tc.OnError(err)
-		return
-	}
-
-	list, err := models.ListTaskInfo(req.UserId)
+	userId := tc.Ctx.Input.Param(":id")
+	list, err := models.ListTaskInfo(userId)
 	if err != nil {
 		tc.OnError(err)
 		return
