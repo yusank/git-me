@@ -43,7 +43,24 @@ func (his *History) Insert() error {
 	return HistoryCollection.Insert(his)
 }
 
-func GetHistory(userId string, page, size int) (list []*History, err error) {
+func (his *History) Update() error {
+	his.LastUse = time.Now().Unix()
+	return HistoryCollection.UpdateId(his.Id, his)
+}
+
+func GetHistory(userId, url string) (his *History, err error) {
+	query := bson.M{"userID": bson.ObjectIdHex(userId), "url": url}
+	his = new(History)
+
+	err = HistoryCollection.Find(query).One(his)
+	if err == mgo.ErrNotFound {
+		err = nil
+	}
+
+	return
+}
+
+func ListHistory(userId string, page, size int) (list []*History, err error) {
 	query := bson.M{"userID": bson.ObjectIdHex(userId)}
 	list = make([]*History, 0)
 

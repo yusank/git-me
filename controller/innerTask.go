@@ -10,7 +10,8 @@ import (
 	"github.com/astaxie/beego/validation"
 )
 
-type InnerTaskController struct {
+// 终端版本上交记录
+type InnerController struct {
 	BasicController
 }
 
@@ -22,22 +23,22 @@ type InnerTaskReq struct {
 }
 
 // 更改任务的状态
-func (itc *InnerTaskController) HandleEvent() {
+func (ic *InnerController) HandleEvent() {
 	var req InnerTaskReq
-	if err := json.Unmarshal(itc.Ctx.Input.RequestBody, &req); err != nil {
-		itc.OnError(err)
+	if err := json.Unmarshal(ic.Ctx.Input.RequestBody, &req); err != nil {
+		ic.OnError(err)
 		return
 	}
 
 	valid := validation.Validation{}
 	b, err := valid.Valid(&req)
 	if err != nil {
-		itc.OnError(err)
+		ic.OnError(err)
 		return
 	}
 
 	if !b {
-		itc.OnCustomError(consts.ErrInvalidParams)
+		ic.OnCustomError(consts.ErrInvalidParams)
 		return
 	}
 
@@ -47,47 +48,69 @@ func (itc *InnerTaskController) HandleEvent() {
 
 	user, err = user.Get()
 	if err != nil {
-		itc.OnError(err)
+		ic.OnError(err)
 		return
 	}
 
 	if user.Password != utils.StringMd5(req.Pass) {
-		itc.OnCustomError(consts.ErrInvalidPass)
+		ic.OnCustomError(consts.ErrInvalidPass)
 		return
 	}
 
 	task, err := models.GetTaskInfoByUserAndUrl(user.Id.Hex(), req.URL)
 	if err != nil {
-		itc.OnError(err)
+		ic.OnError(err)
 		return
 	}
 
 	if task == nil {
-		itc.OnCustomError(consts.ErrTaskNotFound)
+		ic.OnCustomError(consts.ErrTaskNotFound)
 		return
 	}
 
 	if task.Status == models.TaskStatusFinish {
-		itc.OnCustomError(consts.ErrTaskFinish)
+		ic.OnCustomError(consts.ErrTaskFinish)
 		return
 	}
 
 	task.Status = req.Event
+	err = task.Update()
 
-	if err = task.Update(); err != nil {
-		itc.OnError(err)
+	if req.Event == models.TaskStatusFinish {
+		his, err := models.GetHistory(user.Id.Hex(), req.URL)
+		if err != nil {
+			ic.OnError(err)
+			return
+		}
+
+		if his == nil {
+			his = &models.History{
+				UserID: user.Id,
+				URL:    req.URL,
+			}
+
+			err = his.Insert()
+			goto finish
+		}
+
+		err = his.Update()
+	}
+
+finish:
+	if err != nil {
+		ic.OnError(err)
 		return
 	}
 
-	itc.JSON("")
+	ic.JSON("")
 }
 
 // 列出未完成任务
-func (itc *InnerTaskController) ListUserTasks() {
+func (ic *InnerController) ListUserTasks() {
 	var req InnerTaskReq
-	err := json.Unmarshal(itc.Ctx.Input.RequestBody, &req)
+	err := json.Unmarshal(ic.Ctx.Input.RequestBody, &req)
 	if err != nil {
-		itc.OnError(err)
+		ic.OnError(err)
 		return
 	}
 
@@ -97,20 +120,20 @@ func (itc *InnerTaskController) ListUserTasks() {
 
 	user, err = user.Get()
 	if err != nil {
-		itc.OnError(err)
+		ic.OnError(err)
 		return
 	}
 
 	if user.Password != utils.StringMd5(req.Pass) {
-		itc.OnCustomError(consts.ErrInvalidPass)
+		ic.OnCustomError(consts.ErrInvalidPass)
 		return
 	}
 
 	list, err := models.ListUnFinishedTaskInfo(user.Id.Hex())
 	if err != nil {
-		itc.OnError(err)
+		ic.OnError(err)
 		return
 	}
 
-	itc.JSON(list)
+	ic.JSON(list)
 }

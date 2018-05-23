@@ -50,9 +50,9 @@ func init() {
 			beego.NSRouter("/del", &controller.TaskController{}, "post:DelTask"),
 		),
 
-		beego.NSNamespace("/inner-task",
-			beego.NSRouter("/list", &controller.InnerTaskController{}, "post:ListUserTasks"),
-			beego.NSRouter("/update", &controller.InnerTaskController{}, "post:HandleEvent"),
+		beego.NSNamespace("/inner",
+			beego.NSRouter("/task-list", &controller.InnerController{}, "post:ListUserTasks"),
+			beego.NSRouter("/task-upload", &controller.InnerController{}, "post:HandleEvent"),
 		),
 	)
 

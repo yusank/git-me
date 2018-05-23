@@ -42,7 +42,7 @@ func (hc *HistoryController) List() {
 		defSize, _ = strconv.Atoi(s)
 	}
 
-	list, err := models.GetHistory(user.Id.Hex(), defPage, defSize)
+	list, err := models.ListHistory(user.Id.Hex(), defPage, defSize)
 	if err != nil {
 		hc.OnError(err)
 		return
