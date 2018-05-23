@@ -13,5 +13,9 @@ func InitModels() error {
 		return err
 	}
 
+	if err := models.PrepareCollect(); err != nil {
+		return err
+	}
+
 	return models.PrepareHistory()
 }

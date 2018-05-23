@@ -16,7 +16,7 @@ type DownloaderController struct {
 }
 
 type DownloadInfo struct {
-	URL string `json:"url"`
+	URL string `json:"url" valid:"Required"`
 }
 
 func (dc *DownloaderController) ParseVideo() {

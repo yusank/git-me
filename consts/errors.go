@@ -35,7 +35,7 @@ var (
 	ErrSign                = NewError(200, 400, "签名错误")
 	ErrNilToDownload       = NewError(200, 400, "没有可下载的信息")
 	ErrNotFound            = NewError(200, 400, "搜索结果为空")
-	ErrTaskExists          = NewError(200, 400, "任务已存在")
+	ErrDataExists          = NewError(200, 400, "重复添加")
 	ErrTaskNotFound        = NewError(200, 400, "任务无法找打")
 	ErrTaskFinish          = NewError(200, 400, "任务已完成")
 	ErrIpHasBlocked        = NewError(200, 0400, "该 ip 已限制使用")

@@ -5,7 +5,6 @@ import (
 
 	"git-me/consts"
 	"git-me/models"
-	"git-me/utils"
 
 	"github.com/astaxie/beego/validation"
 )
@@ -52,7 +51,8 @@ func (ic *InnerController) HandleEvent() {
 		return
 	}
 
-	if user.Password != utils.StringMd5(req.Pass) {
+	// 终端上传时，密码已加密过
+	if user.Password != req.Pass {
 		ic.OnCustomError(consts.ErrInvalidPass)
 		return
 	}
@@ -124,7 +124,8 @@ func (ic *InnerController) ListUserTasks() {
 		return
 	}
 
-	if user.Password != utils.StringMd5(req.Pass) {
+	// 上传时，用户信息已加密过
+	if user.Password != req.Pass {
 		ic.OnCustomError(consts.ErrInvalidPass)
 		return
 	}

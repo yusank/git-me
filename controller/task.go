@@ -93,7 +93,7 @@ func (tc *TaskController) AddTask() {
 	}
 
 	if task != nil {
-		tc.OnCustomError(consts.ErrTaskExists)
+		tc.OnCustomError(consts.ErrDataExists)
 		return
 	}
 
