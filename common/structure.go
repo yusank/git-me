@@ -36,3 +36,8 @@ type InnerTask struct {
 	Sort   int    `json:"sort"`
 	Tp     int    `json:"tp"`
 }
+
+type UploadInfo struct {
+	URL    string
+	Status int
+}

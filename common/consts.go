@@ -37,12 +37,21 @@ var (
 	Name string
 	// user password
 	Pass string
+
+	FinishChan = make(chan UploadInfo)
 )
 
 const (
 	DefaultSize = 1024 * 64
 
 	Host         = "http://45.76.169.195:17717"
-	ListRouter   = "/v1/inner-task/list"
-	UploadRouter = "/v1/inner-task/upload"
+	ListRouter   = "/v1/inner/task-list"
+	UploadRouter = "/v1/inner/task-upload"
+)
+
+const (
+	TaskStatusDefault = iota
+	TaskStatusDownlaoding
+	TaskStatusFail
+	TaskStatusFinish
 )

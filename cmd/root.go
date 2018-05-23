@@ -22,6 +22,7 @@ var (
 	cfgFile     string
 	OutputDir   string
 	inputReader *bufio.Reader
+	exitChan    chan int
 )
 
 // RootCmd represents the base command when called without any subcommands
@@ -38,6 +39,27 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		go func() {
+			select {
+			case u := <-common.FinishChan:
+				// only upload when have user account info
+				if common.Name != "" && common.Pass != "" {
+					resp := model.InnerTaskResp{
+						Name:  common.Name,
+						Pass:  utils.StringMd5(common.Pass),
+						URL:   u.URL,
+						Event: u.Status,
+					}
+
+					if err := model.UploadCurrentTaskStatus(resp); err != nil {
+						fmt.Println("upload err :", err)
+					}
+				}
+			case <-exitChan:
+				break
+			}
+		}()
+
 		// init http-client
 		utils.InitHttpClient()
 
@@ -59,6 +81,7 @@ var RootCmd = &cobra.Command{
 
 		uri := args[0]
 		extractors.MatchUrl(uri, OutputDir)
+		exitChan <- 1
 	},
 }
 
@@ -118,7 +141,7 @@ func handleUserTask() []string {
 
 	var u model.InnerTaskResp
 	u.Name = common.Name
-	u.Pass = common.Pass
+	u.Pass = utils.StringMd5(common.Pass)
 
 	urls, err := model.GetUserTask(u)
 	if err != nil {

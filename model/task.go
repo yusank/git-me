@@ -58,7 +58,7 @@ func GetUserTask(p InnerTaskResp) (urls []string, err error) {
 	return
 }
 
-func UploadCurrentTaskStatus(p InnerTaskReq) (err error) {
+func UploadCurrentTaskStatus(p InnerTaskResp) (err error) {
 	body, err := json.Marshal(p)
 	if err != nil {
 		return

@@ -105,34 +105,34 @@ func printStream(k string, data FormatData) {
 	fmt.Println()
 }
 
-func (v VideoData) printInfo(format string) {
+func (vid VideoData) printInfo(format string) {
 	cyan := color.New(color.FgCyan)
 	fmt.Println()
 	cyan.Printf(" Site:      ")
-	fmt.Println(v.Site)
+	fmt.Println(vid.Site)
 	cyan.Printf(" Title:     ")
-	fmt.Println(v.Title)
+	fmt.Println(vid.Title)
 	cyan.Printf(" Type:      ")
-	fmt.Println(v.Type)
+	fmt.Println(vid.Type)
 	cyan.Printf(" Stream:   ")
 	fmt.Println()
-	printStream(format, v.Formats[0])
+	printStream(format, vid.Formats[0])
 }
 
 // Download download urls
-func (v VideoData) Download(refer string) {
+func (vid VideoData) Download(refer string) {
 
 	var format, title string
-	title = utils.FileName(v.Title)
-	data := v.Formats[0]
-	ok := len(v.Formats) != 0
+	title = utils.FileName(vid.Title)
+	data := vid.Formats[0]
+	ok := len(vid.Formats) != 0
 	if !ok {
 		log.Fatal("No format named " + format)
 	}
 	if data.Size == 0 {
 		data.calculateTotalSize()
 	}
-	v.printInfo(format)
+	vid.printInfo(format)
 	bar := pb.New64(data.Size).SetUnits(pb.U_BYTES).SetRefreshRate(time.Millisecond * 10)
 	bar.ShowSpeed = true
 	bar.ShowFinalTime = true
@@ -140,7 +140,7 @@ func (v VideoData) Download(refer string) {
 	bar.Start()
 	if len(data.URLs) == 1 {
 		// only one fragment
-		data.urlSave(data.URLs[0], refer, title, v.OutputDir, bar)
+		data.urlSave(data.URLs[0], refer, title, vid.OutputDir, bar)
 		bar.Finish()
 		return
 	}
@@ -149,28 +149,28 @@ func (v VideoData) Download(refer string) {
 	parts := []string{}
 	for index, url := range data.URLs {
 		partFileName := fmt.Sprintf("%s[%d]", title, index)
-		partFilePath := utils.FilePath(partFileName, url.Ext, v.OutputDir, false)
+		partFilePath := utils.FilePath(partFileName, url.Ext, vid.OutputDir, false)
 		parts = append(parts, partFilePath)
 
 		wgp.Add()
 		go func(url URLData, refer, fileName string, bar *pb.ProgressBar) {
 			defer wgp.Done()
-			data.urlSave(url, refer, fileName, v.OutputDir, bar)
+			data.urlSave(url, refer, fileName, vid.OutputDir, bar)
 		}(url, refer, partFileName, bar)
 
 	}
 	wgp.Wait()
 	bar.Finish()
 
-	if v.Type != "video" {
+	if vid.Type != "video" {
 		return
 	}
 	// merge
 	mergeFileName := title + ".txt" // merge list file should be in the current directory
-	filePath := utils.FilePath(title, "mp4", v.OutputDir, false)
+	filePath := utils.FilePath(title, "mp4", vid.OutputDir, false)
 	fmt.Printf("Merging video parts into %s\n", filePath)
 	var cmd *exec.Cmd
-	if strings.Contains(v.Site, "youtube") {
+	if strings.Contains(vid.Site, "youtube") {
 		// merge audio and video
 		cmds := []string{
 			"-y",
@@ -179,7 +179,7 @@ func (v VideoData) Download(refer string) {
 			cmds = append(cmds, "-i", part)
 		}
 		cmds = append(
-			cmds, "-c:v", "copy", "-c:a", "aac", "-strict", "experimental",
+			cmds, "-c:vid", "copy", "-c:a", "aac", "-strict", "experimental",
 			filePath,
 		)
 		cmd = exec.Command("ffmpeg", cmds...)
