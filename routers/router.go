@@ -34,7 +34,13 @@ func init() {
 		),
 
 		beego.NSNamespace("history",
+			beego.NSBefore(middleware.AuthLogin),
 			beego.NSRouter("/list", &controller.HistoryController{}, "get:List"),
+		),
+
+		beego.NSNamespace("collect",
+			beego.NSBefore(middleware.AuthLogin),
+			beego.NSRouter("/list", &controller.CollectController{}, "get:List"),
 		),
 		beego.NSNamespace("/task",
 			beego.NSBefore(middleware.AuthLogin),
