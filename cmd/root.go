@@ -22,7 +22,7 @@ var (
 	cfgFile     string
 	OutputDir   string
 	inputReader *bufio.Reader
-	exitChan    chan int
+	exitChan    = make(chan int)
 )
 
 // RootCmd represents the base command when called without any subcommands
@@ -39,23 +39,29 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		// listen channel FinishChan and exitChan
 		go func() {
-			select {
-			case u := <-common.FinishChan:
-				// only upload when have user account info
-				if common.Name != "" && common.Pass != "" {
-					resp := model.InnerTaskResp{
-						Name:  common.Name,
-						Pass:  utils.StringMd5(common.Pass),
-						URL:   u.URL,
-						Event: u.Status,
-					}
+			for {
+				select {
+				case u := <-common.FinishChan:
+					// only upload when have user account info
+					if common.Name != "" && common.Pass != "" {
+						resp := model.InnerTaskResp{
+							Name:  common.Name,
+							Pass:  utils.StringMd5(common.Pass),
+							URL:   u.URL,
+							Event: u.Status,
+						}
 
-					if err := model.UploadCurrentTaskStatus(resp); err != nil {
-						fmt.Println("upload err :", err)
+						if err := model.UploadCurrentTaskStatus(resp); err != nil {
+							fmt.Println("upload err :", err)
+						}
 					}
+					continue
+				case <-exitChan:
+					fmt.Println("exit")
+					break
 				}
-			case <-exitChan:
 				break
 			}
 		}()
@@ -72,6 +78,7 @@ var RootCmd = &cobra.Command{
 			for _, v := range tasks {
 				extractors.MatchUrl(v, OutputDir)
 			}
+			exitChan <- 1
 			return
 		}
 

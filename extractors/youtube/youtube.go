@@ -120,9 +120,7 @@ func youtubeDownload(uri string, result *common.VideoData) {
 		}
 		realURL = fmt.Sprintf("%s&signature=%s", streamURL, sig)
 	}
-	fmt.Println(realURL)
 	size := utils.DownloadFileSize(realURL, uri)
-	fmt.Println(size)
 	urlData := common.URLData{
 		URL:  realURL,
 		Size: size,
@@ -130,9 +128,9 @@ func youtubeDownload(uri string, result *common.VideoData) {
 	}
 
 	format := common.FormatData{
-		URLs: []common.URLData{urlData},
-		Size: urlData.Size,
-		Quality:quality,
+		URLs:    []common.URLData{urlData},
+		Size:    urlData.Size,
+		Quality: quality,
 	}
 
 	result.Site = "YouTube youtube.com"

@@ -144,7 +144,6 @@ func RequestWithRetry(url string, header map[string]string) (resp *http.Response
 }
 
 func GetRequestStr(url string, refer string) string {
-	fmt.Printf("HttpGetByte:%s\n", url)
 	headers := map[string]string{}
 	if refer != "" {
 		headers["Referer"] = refer
@@ -166,8 +165,6 @@ func GetRequestStr(url string, refer string) string {
 
 // HttpGetByte -
 func HttpGetByte(url string, header map[string]string) ([]byte, error) {
-	fmt.Printf("HttpGetByte:%s\n", url)
-
 	resp, err := HttpGet(url, header)
 	if err != nil {
 		return nil, err
@@ -189,7 +186,6 @@ func DecodeResp(resp *http.Response) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(len(body))
 	return body, nil
 }
 

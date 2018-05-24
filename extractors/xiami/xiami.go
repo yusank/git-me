@@ -8,8 +8,9 @@ import (
 	"git-me/utils"
 
 	//"github.com/beevik/etree"
-	"github.com/PuerkitoBio/goquery"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 type BasicInfo struct {
@@ -34,7 +35,7 @@ func (xm BasicInfo) Prepare(Params map[string]interface{}) error {
 	return nil
 }
 
-func (xm BasicInfo) Download(url string) (common.VideoData ,error) {
+func (xm BasicInfo) Download(url string) (common.VideoData, error) {
 	// albums
 
 	// collections
@@ -45,8 +46,7 @@ func (xm BasicInfo) Download(url string) (common.VideoData ,error) {
 	return downloadMv(url)
 }
 
-
-func downloadMv(url string) (data common.VideoData,err error){
+func downloadMv(url string) (data common.VideoData, err error) {
 	page, err := utils.HttpGetByte(url, nil)
 	if err != nil {
 		return
@@ -76,12 +76,10 @@ func downloadMv(url string) (data common.VideoData,err error){
 	}
 
 	apiUrl := fmt.Sprintf("http://cloud.video.taobao.com/videoapi/info.php?vid=%s&uid=%s", vid, uid)
-	result, err := utils.HttpGetByte(apiUrl, nil)
+	_, err = utils.HttpGetByte(apiUrl, nil)
 	if err != nil {
 		return
 	}
-
-	fmt.Println(string(result))
 
 	doc, err := goquery.NewDocument(apiUrl)
 	if err != nil {

@@ -168,7 +168,7 @@ func (vid VideoData) Download(refer string) {
 	// merge
 	mergeFileName := title + ".txt" // merge list file should be in the current directory
 	filePath := utils.FilePath(title, "mp4", vid.OutputDir, false)
-	fmt.Printf("Merging video parts into %s\n", filePath)
+	fmt.Printf("正将散列文件合并至 %s\n", filePath)
 	var cmd *exec.Cmd
 	if strings.Contains(vid.Site, "youtube") {
 		// merge audio and video
@@ -207,4 +207,7 @@ func (vid VideoData) Download(refer string) {
 	for _, part := range parts {
 		os.Remove(part)
 	}
+
+	fmt.Printf("合并完成 \n")
+	return
 }

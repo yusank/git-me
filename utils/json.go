@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/bitly/go-simplejson"
 )
 
@@ -12,8 +11,6 @@ func LoadJSON(url string, header map[string]string) (*simplejson.Json, error) {
 		return nil, err
 	}
 
-	fmt.Println(len(body))
-	fmt.Println(string(body))
 	return simplejson.NewJson(body)
 	// var f interface{}
 	// if err := json.Unmarshal(data, &f); err != nil {
