@@ -31,6 +31,7 @@ package middleware
 
 import (
 	"git-me/consts"
+	"git-me/models"
 
 	"github.com/astaxie/beego/context"
 )
@@ -45,11 +46,16 @@ func authFailed(ctx *context.Context) {
 }
 
 func AuthLogin(ctx *context.Context) {
-	channelName := ctx.Input.CruSession.Get(consts.SessionUserID)
-	if channelName == nil {
+	userID := ctx.Input.CruSession.Get(consts.SessionUserID)
+	if userID == nil {
+		authFailed(ctx)
+		return
+	}
+	user, err := models.GetUserById(userID.(string))
+	if err != nil || user == nil {
 		authFailed(ctx)
 		return
 	}
 
-	//ctx.Input.SetData("vendor", vendor)
+	ctx.Input.SetData("user", user)
 }
