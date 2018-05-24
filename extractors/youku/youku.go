@@ -102,6 +102,11 @@ func (yk BasicInfo) genData() ([]common.URLData, int64, string) {
 		size  int64
 		index int
 	)
+
+	if len(yk.Data.Stream) == 0 {
+		log.Fatal("用户异常，请重新登录对应网站账号")
+	}
+
 	// get the best quality
 	for i, s := range yk.Data.Stream {
 		if s.Size > size {
@@ -142,6 +147,8 @@ func (yk BasicInfo) Download(url string) (data common.VideoData, err error) {
 		log.Println(yk.Data.Error.Note)
 		return
 	}
+
+	fmt.Printf("%+v \n", yk)
 	urls, size, quality := yk.genData()
 	format := common.FormatData{
 		URLs:    urls,

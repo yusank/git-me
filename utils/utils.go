@@ -32,6 +32,8 @@ package utils
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
+	"net/url"
 	"runtime"
 	"strings"
 )
@@ -70,4 +72,24 @@ func StringMd5(str string) string {
 	hash.Write([]byte(str))
 
 	return hex.EncodeToString(hash.Sum(nil))
+}
+
+// M3u8URLs get all urls from m3u8 url
+func M3u8URLs(uri string) []string {
+	html := GetRequestStr(uri, "")
+	lines := strings.Split(html, "\n")
+	var urls []string
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line != "" && !strings.HasPrefix(line, "#") {
+			if strings.HasPrefix(line, "http") {
+				urls = append(urls, line)
+			} else {
+				base, _ := url.Parse(uri)
+				u, _ := url.Parse(line)
+				urls = append(urls, fmt.Sprintf("%s", base.ResolveReference(u)))
+			}
+		}
+	}
+	return urls
 }

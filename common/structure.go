@@ -61,3 +61,17 @@ type Pagination struct {
 	Page int `json:"page"`
 	Size int `json:"size"`
 }
+
+type InnerTask struct {
+	Id     string `json:"id"`
+	UserId string `json:"userId"`
+	URL    string `json:"url"`
+	Status int    `json:"status"`
+	Sort   int    `json:"sort"`
+	Tp     int    `json:"tp"`
+}
+
+type UploadInfo struct {
+	URL    string
+	Status int
+}

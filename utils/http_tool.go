@@ -30,16 +30,17 @@
 package utils
 
 import (
+	"bytes"
 	"compress/gzip"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
-	"io"
-	"path/filepath"
-	"log"
 )
 
 var (
@@ -96,7 +97,6 @@ func DownloadFileSize(url, refer string) int64 {
 	return size
 }
 
-
 // FilePath gen valid file path
 func FilePath(name, ext, output string, escape bool) string {
 	var outputPath string
@@ -124,7 +124,6 @@ func FileSize(filePath string) (int64, bool) {
 	return file.Size(), true
 }
 
-
 // HttpGetByte - get http response
 func HttpGet(url string, header map[string]string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
@@ -145,9 +144,9 @@ func HttpGet(url string, header map[string]string) (*http.Response, error) {
 		req.Header.Set("Cookie", cookie)
 	}
 
-	//for k, v := range FakeHeader {
-	//	req.Header.Set(k, v)
-	//}
+	for k, v := range FakeHeader {
+		req.Header.Set(k, v)
+	}
 	req.Header.Set("Referer", url)
 
 	for k, v := range header {
@@ -174,7 +173,6 @@ func RequestWithRetry(url string, header map[string]string) (resp *http.Response
 }
 
 func GetRequestStr(url string, refer string) string {
-	fmt.Printf("HttpGetByte:%s\n", url)
 	headers := map[string]string{}
 	if refer != "" {
 		headers["Referer"] = refer
@@ -218,4 +216,14 @@ func DecodeResp(resp *http.Response) ([]byte, error) {
 		return nil, err
 	}
 	return body, nil
+}
+
+func HttpPost(url string, body []byte) (resp *http.Response, err error) {
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err = httpClient.Do(req)
+	return
 }

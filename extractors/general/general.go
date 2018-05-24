@@ -37,7 +37,6 @@ import (
 	"strings"
 
 	"git-me/common"
-	"git-me/consts"
 	"git-me/utils"
 )
 
@@ -56,7 +55,7 @@ func (gn BasicInfo) Download(url string) (vid common.VideoData, err error) {
 
 	urlData := common.URLData{
 		URL:  url,
-		Size: consts.DefaultSize,
+		Size: common.DefaultSize,
 		Ext:  ext,
 	}
 
