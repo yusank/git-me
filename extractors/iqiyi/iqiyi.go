@@ -90,7 +90,7 @@ func getIqiyiData(tvid, vid string) iqiyi {
 }
 
 // Iqiyi download function
-func (iq BasicInfo) Download(url string) (common.VideoData, error) {
+func (iq BasicInfo) Download(url string) (data common.VideoData, err error) {
 	html := utils.GetRequestStr(url, iqiyiReferer)
 	tvid := utils.MatchOneOf(
 		url,
@@ -116,7 +116,12 @@ func (iq BasicInfo) Download(url string) (common.VideoData, error) {
 			`param\['vid'\]\s*=\s*"(.+?)"`,
 		)
 	}
-	doc := utils.GetDoc(html)
+	doc, err := utils.GetDoc(html)
+	if err != nil {
+		fmt.Println(err)
+		return
+
+	}
 	title := strings.TrimSpace(doc.Find("h1 a").Text()) +
 		strings.TrimSpace(doc.Find("h1 span").Text())
 	if title == "" {
@@ -165,12 +170,12 @@ func (iq BasicInfo) Download(url string) (common.VideoData, error) {
 		}
 	}
 
-	extractedData := common.VideoData{
+	data = common.VideoData{
 		Site:    "爱奇艺 iqiyi.com",
 		Title:   title,
 		Type:    "video",
 		Formats: format,
 	}
 
-	return extractedData, nil
+	return
 }
