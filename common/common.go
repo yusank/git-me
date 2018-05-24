@@ -38,10 +38,10 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
-	"git-me/utils"
-	"sync"
+	"github.com/yusank/git-me/utils"
 )
 
 /*

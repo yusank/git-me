@@ -33,9 +33,10 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"git-me/db"
 	"math/rand"
 	"time"
+
+	"github.com/yusank/git-me/db"
 )
 
 type User struct {

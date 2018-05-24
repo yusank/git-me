@@ -29,7 +29,7 @@
 
 package models
 
-import "git-me/db"
+import "github.com/yusank/git-me/db"
 
 const (
 	StatSitePrefix = "StatParseNum"

@@ -30,8 +30,8 @@
 package routers
 
 import (
-	"git-me/controller"
-	"git-me/middleware"
+	"github.com/yusank/git-me/controller"
+	"github.com/yusank/git-me/middleware"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"

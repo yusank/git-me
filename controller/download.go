@@ -31,14 +31,15 @@ package controller
 
 import (
 	"fmt"
-	"git-me/consts"
-	"git-me/extractors"
-	"git-me/models"
-	"git-me/utils"
 	"io"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/yusank/git-me/consts"
+	"github.com/yusank/git-me/extractors"
+	"github.com/yusank/git-me/models"
+	"github.com/yusank/git-me/utils"
 )
 
 type DownloaderController struct {

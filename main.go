@@ -32,11 +32,10 @@ package main
 import (
 	"os"
 
-	"git-me/db"
-	_ "git-me/routers"
-
-	"git-me/extractors"
-	"git-me/utils"
+	"github.com/yusank/git-me/db"
+	"github.com/yusank/git-me/extractors"
+	_ "github.com/yusank/git-me/routers"
+	"github.com/yusank/git-me/utils"
 
 	"github.com/astaxie/beego"
 )

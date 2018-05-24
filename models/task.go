@@ -30,7 +30,7 @@
 package models
 
 import (
-	"git-me/db"
+	"github.com/yusank/git-me/db"
 
 	"time"
 

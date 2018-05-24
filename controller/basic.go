@@ -30,11 +30,12 @@
 package controller
 
 import (
-	"git-me/consts"
 	"net/http"
+	"strings"
+
+	"github.com/yusank/git-me/consts"
 
 	"github.com/astaxie/beego"
-	"strings"
 )
 
 type BasicController struct {

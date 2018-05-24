@@ -31,7 +31,8 @@ package models
 
 import (
 	"fmt"
-	"git-me/db"
+
+	"github.com/yusank/git-me/db"
 )
 
 const (

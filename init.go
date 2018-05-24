@@ -30,7 +30,7 @@
 package main
 
 import (
-	"git-me/models"
+	"github.com/yusank/git-me/models"
 )
 
 func InitModels() error {

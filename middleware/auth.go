@@ -30,8 +30,8 @@
 package middleware
 
 import (
-	"git-me/consts"
-	"git-me/models"
+	"github.com/yusank/git-me/consts"
+	"github.com/yusank/git-me/models"
 
 	"github.com/astaxie/beego/context"
 )

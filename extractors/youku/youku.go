@@ -32,11 +32,12 @@ package youku
 import (
 	"encoding/json"
 	"fmt"
-	"git-me/common"
-	"git-me/utils"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/yusank/git-me/common"
+	"github.com/yusank/git-me/utils"
 )
 
 func (yk BasicInfo) Prepare(params map[string]interface{}) error {

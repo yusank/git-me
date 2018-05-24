@@ -31,9 +31,10 @@ package controller
 
 import (
 	"encoding/json"
-	"git-me/consts"
-	"git-me/models"
 	"strconv"
+
+	"github.com/yusank/git-me/consts"
+	"github.com/yusank/git-me/models"
 
 	"github.com/astaxie/beego/validation"
 )
