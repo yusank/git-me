@@ -30,6 +30,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -47,7 +48,12 @@ type DownloaderController struct {
 }
 
 type DownloadInfo struct {
-	URL string `json:"url" valid:"Required"`
+	URL  string `json:"url" valid:"Required"`
+	Type int    `json:"type" valid:"Required"`
+}
+
+type CheckResp struct {
+	IsUseful bool `json:"isUseful"`
 }
 
 func (dc *DownloaderController) ParseVideo() {
@@ -58,12 +64,12 @@ func (dc *DownloaderController) ParseVideo() {
 		finish  bool
 		now     = time.Now().Unix()
 	)
-	//if err := json.Unmarshal(dc.Ctx.Input.RequestBody, &di); err != nil {
-	//	dc.OnError(err)
-	//	return
-	//}
+	if err := json.Unmarshal(dc.Ctx.Input.RequestBody, &di); err != nil {
+		dc.OnError(err)
+		return
+	}
 
-	di.URL = "https://www.bilibili.com/video/av23606332/?spm_id_from=333.334.bili_game.4"
+	//di.URL = "https://www.bilibili.com/video/av23606332/?spm_id_from=333.334.bili_game.4"
 	uid := dc.GetSession(consts.SessionUserID)
 	if uid == nil {
 		ip = dc.GetIp()
@@ -82,6 +88,13 @@ func (dc *DownloaderController) ParseVideo() {
 	vid, err := extractors.MatchUrl(di.URL)
 	if err != nil {
 		dc.OnError(err)
+		return
+	}
+
+	if di.Type == consts.DownloadTypeCheck {
+		var resp CheckResp
+		resp.IsUseful = len(vid.Formats) > 0 && len(vid.Formats[0].URLs) > 0
+		dc.JSON(resp)
 		return
 	}
 

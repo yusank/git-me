@@ -56,3 +56,8 @@ const (
 const (
 	ErrCodeSuccess = iota
 )
+
+const (
+	DownloadTypeCheck = iota
+	DownloadTypePreview
+)

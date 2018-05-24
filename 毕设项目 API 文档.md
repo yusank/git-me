@@ -2,6 +2,12 @@
 
 [TOC]
 
+## 更新记录
+
+2018.05.23：添加收藏模块接口
+
+2018.05.24：更新解释 url 接口
+
 ## 用户系统
 
 *所有的 POST 请求参数都会以 json 格式传输*
@@ -115,12 +121,11 @@
 
 ## 解析URL
 
-*此接口暂停使用*
-
-| 路由 | /v1/download/vid                 |
-| ---- | -------------------------------- |
-| 参数 | {"url":"http://baidu.com/a.jpg"} |
-| 方法 | POST                             |
+| 路由 | /v1/download/vid                               |
+| ---- | ---------------------------------------------- |
+| 参数 | {"url":"http://baidu.com/a.jpg", "type":0或1}  |
+| 方法 | POST                                           |
+| 说明 | 参数中的 type 为0表示，检测 url；1时表示，预览 |
 
 **注：参数为 json 格式**
 
@@ -129,28 +134,13 @@
 ```json
 {
   "data": {
-    "site": "baidu.com",	// 解析到的根域名
-    "title": "a",	// 标题
-    "formats": [
-      {
-        "urls": [	// 解析到的 url 数组，一个元素显示一行即可
-          {
-            "url": "http://baidu.com/a.jpg",
-            "size": 65536,
-            "ext": "jpg"
-          }
-        ],
-        "quality": "",	// 画质|| 清晰度
-        "size": 1	// urls 的长度
-      }
-    ],
-    "type": "image"
+      "isUseful"：true/false	// 调接口时，type 为0时，返回该响应，表示该 url 是否可用
   },
   "errcode": 0
 }
 ```
 
-
+**如果传参的 type=1 ，则返回二进制文件流，是大小为2m 的视频文件，用来预览**
 
 ## 历史记录
 
@@ -168,6 +158,7 @@
         	"id":"123",
         	"userId":"123",
         	"site":"bilibili.com",
+        	"title":"视频的 title"
         	"url":"http://abc.com",
         	"size":1024,
         	"quality":"高清",
@@ -263,8 +254,6 @@
 
 ### 删除预定
 
-### 
-
 | 路由 | /v1/task/del |
 | ---- | ------------ |
 | 参数 | 传 id        |
@@ -276,6 +265,57 @@
 {
     "data": "success",
     "errcode": 0
+}
+```
+
+
+
+## 收藏
+
+### 添加收藏
+
+| 路由 | /v1/collect/add                  |
+| ---- | -------------------------------- |
+| 参数 | {"url":"http://baidu.com/a.jpg"} |
+| 方法 | POST                             |
+
+**注：参数为 json 格式**
+
+返回值:
+
+```json
+{
+    "data": "success",
+    "errcode": 0
+}
+```
+
+
+
+### 获取收藏列表
+
+| 路由 | /v1/collect/list |
+| ---- | ---------------- |
+| 参数 | page=1&size=10   |
+| 方法 | GET              |
+
+返回参数
+
+```json
+{
+    "data":{
+        [
+        	"id":"123",
+        	"userId":"123",
+        	"url":"http://abc.com",
+        	"site":"baidu.com",
+        	"size":1024,
+        	"title":"资源的 title"
+        	"quality":"高清",
+        	"createdAt":1502020220,// 创建时间
+        ],[]....
+    },
+    "errCode":0
 }
 ```
 

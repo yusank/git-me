@@ -46,10 +46,10 @@ type InnerController struct {
 }
 
 type InnerTaskReq struct {
-	Name  string `json:"name" valid:"require"`
-	Pass  string `json:"pass" valid:"require"`
-	Event int    `json:"event" valid:"require"`
-	URL   string `json:"url" valid:"require"`
+	Name  string `json:"name" valid:"Required"`
+	Pass  string `json:"pass" valid:"Required"`
+	Event int    `json:"event" valid:"Required"`
+	URL   string `json:"url" valid:"Required"`
 }
 
 // 更改任务的状态
@@ -138,13 +138,13 @@ func (ic *InnerController) HandleEvent() {
 			}
 
 			err = his.Insert()
-			goto finish
+		} else {
+			err = his.Update()
 		}
 
-		err = his.Update()
+		models.AddStatSite(his.Site)
 	}
 
-finish:
 	if err != nil {
 		ic.OnError(err)
 		return
