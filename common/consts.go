@@ -63,3 +63,7 @@ var (
 	// The number of download thread
 	ThreadNumber int
 )
+
+const (
+	DefaultSize = 1024
+)

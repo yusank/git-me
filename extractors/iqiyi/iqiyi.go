@@ -116,7 +116,7 @@ func (iq BasicInfo) Download(url string) (common.VideoData, error) {
 			`param\['vid'\]\s*=\s*"(.+?)"`,
 		)
 	}
-	doc := utils.GetDoc(html)
+	doc, _ := utils.GetDoc(html)
 	title := strings.TrimSpace(doc.Find("h1 a").Text()) +
 		strings.TrimSpace(doc.Find("h1 span").Text())
 	if title == "" {
