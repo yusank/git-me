@@ -116,7 +116,7 @@ func (iq BasicInfo) Download(url string) (common.VideoData, error) {
 			`param\['vid'\]\s*=\s*"(.+?)"`,
 		)
 	}
-	doc, _ := utils.GetDoc(html)
+	doc := utils.GetDoc(html)
 	title := strings.TrimSpace(doc.Find("h1 a").Text()) +
 		strings.TrimSpace(doc.Find("h1 span").Text())
 	if title == "" {
@@ -126,11 +126,11 @@ func (iq BasicInfo) Download(url string) (common.VideoData, error) {
 	if videoDatas.Code != "A00000" {
 		log.Fatal("Can't play this video")
 	}
-	format := []common.FormatData{}
+	var format []common.FormatData
 	var urlData common.URLData
 	var size, totalSize int64
 	for _, video := range videoDatas.Data.Vidl {
-		urls := []common.URLData{}
+		var urls []common.URLData
 		totalSize = 0
 		for _, ts := range utils.M3u8URLs(video.M3utx) {
 			size, _ = strconv.ParseInt(

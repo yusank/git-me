@@ -37,13 +37,12 @@ import (
 )
 
 // GetDoc return Document object of the HTML string
-func GetDoc(html string) (*goquery.Document, error) {
+func GetDoc(html string) *goquery.Document {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		log.Fatal(err)
 	}
-	return doc, nil
+	return doc
 }
 
 // Title get title
