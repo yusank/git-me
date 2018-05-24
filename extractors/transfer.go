@@ -5,6 +5,7 @@ import (
 	"git-me/common"
 	"git-me/extractors/bilibili"
 	"git-me/extractors/general"
+	"git-me/extractors/iqiyi"
 	"git-me/extractors/netease"
 	"git-me/extractors/xiami"
 	"git-me/extractors/youku"
@@ -27,6 +28,7 @@ func BeforeRun() {
 	TransferMap["xiami"] = xiami.BasicInfo{}
 	TransferMap["general"] = general.BasicInfo{}
 	TransferMap["bilibili"] = bilibili.BasicInfo{}
+	TransferMap["iqiyi"] = iqiyi.BasicInfo{}
 }
 
 func Foo(uri, output string, implement interface{}) {
