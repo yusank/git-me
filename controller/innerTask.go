@@ -35,6 +35,8 @@ import (
 	"git-me/consts"
 	"git-me/models"
 
+	"git-me/extractors"
+
 	"github.com/astaxie/beego/validation"
 )
 
@@ -113,9 +115,26 @@ func (ic *InnerController) HandleEvent() {
 		}
 
 		if his == nil {
+			vid, err := extractors.MatchUrl(req.URL)
+			if err != nil {
+				ic.OnError(err)
+				return
+			}
+
+			if vid == nil {
+				ic.OnCustomError(consts.ErrNilToDownload)
+				return
+			}
+
+			info := vid.Formats[0]
 			his = &models.History{
-				UserID: user.Id,
-				URL:    req.URL,
+				UserID:  user.Id,
+				URL:     req.URL,
+				Size:    info.Size,
+				Site:    vid.Site,
+				Type:    vid.Type,
+				Title:   vid.Title,
+				Quality: info.Quality,
 			}
 
 			err = his.Insert()

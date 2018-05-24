@@ -42,6 +42,7 @@ type CollectInfo struct {
 	Id        bson.ObjectId `json:"id" bson:"_id"`
 	UserId    bson.ObjectId `json:"userId" bson:"userId"`
 	URL       string        `json:"url" bson:"url"`
+	Title     string        `json:"title" bson:"title"`
 	Site      string        `json:"site" bson:"site"`
 	Size      int64         `json:"size" bson:"size"`
 	Quality   string        `json:"quality" bson:"quality"`

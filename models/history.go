@@ -42,10 +42,11 @@ type History struct {
 	Id        bson.ObjectId `json:"id" bson:"_id"`
 	UserID    bson.ObjectId `json:"userId" bson:"userID"`
 	Site      string        `json:"site" bson:"site"`
+	Title     string        `json:"title" bson:"title"`
 	URL       string        `json:"url" bson:"url"`
 	Size      int64         `json:"size" bson:"size"`
 	Quality   string        `json:"quality" bson:"quality"`
-	Type      int           `json:"type" bson:"type"`
+	Type      string        `json:"type" bson:"type"`
 	LastUse   int64         `json:"lastUse" bson:"lastUse"`
 	CreatedAt int64         `json:"createdAt" bson:"createdAt"`
 }

@@ -97,11 +97,18 @@ func (cc *CollectController) AddCollect() {
 		return
 	}
 
+	if len(form.Formats) == 0 {
+		cc.OnCustomError(consts.ErrNilToDownload)
+		return
+	}
+
 	col = &models.CollectInfo{
-		UserId: user.Id,
-		URL:    req.URL,
-		Site:   form.Site,
-		Size:   form.Formats[0].Size,
+		UserId:  user.Id,
+		URL:     req.URL,
+		Site:    form.Site,
+		Size:    form.Formats[0].Size,
+		Title:   form.Title,
+		Quality: form.Formats[0].Quality,
 	}
 
 	if err = col.Insert(); err != nil {
