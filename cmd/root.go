@@ -30,17 +30,15 @@
 package cmd
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"os"
 
-	"git-me/common"
-	"git-me/extractors"
-	"git-me/utils"
-
-	"git-me/model"
-
-	"bufio"
+	"github.com/yusank/git-me/common"
+	"github.com/yusank/git-me/extractors"
+	"github.com/yusank/git-me/model"
+	"github.com/yusank/git-me/utils"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"

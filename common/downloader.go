@@ -43,7 +43,7 @@ import (
 	"github.com/cheggaaa/pb"
 	"github.com/fatih/color"
 
-	"git-me/utils"
+	"github.com/yusank/git-me/utils"
 )
 
 func (data *FormatData) calculateTotalSize() {

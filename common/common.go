@@ -40,8 +40,9 @@ import (
 	"strings"
 	"time"
 
-	"git-me/utils"
 	"sync"
+
+	"github.com/yusank/git-me/utils"
 )
 
 /*
@@ -239,10 +240,10 @@ func (vid VideoData) DownloadURL(refer string) error {
 	if len(vid.Formats[0].URLs) < 1 {
 		return fmt.Errorf("empty url")
 	}
-		var wg sync.WaitGroup
+	var wg sync.WaitGroup
 
-		for i, format := range vid.Formats {
-			for _, url := range format.URLs {
+	for i, format := range vid.Formats {
+		for _, url := range format.URLs {
 			fmt.Println("start downloading...", url.URL)
 			outPath := path.Join(vid.OutputDir, fmt.Sprintf("%s[%d].%s", vid.Title, i, url.Ext))
 			if strings.Contains(refer, "mgtv") {
@@ -303,7 +304,7 @@ func URLSave(url URLData, path, refer string) error {
 			if os.IsNotExist(err) {
 				file, err = os.Create(tmpFilePath)
 				if err != nil {
-					fmt.Printf("create %s error: %v \n",tmpFilePath, err)
+					fmt.Printf("create %s error: %v \n", tmpFilePath, err)
 					return err
 				}
 				defer file.Close()

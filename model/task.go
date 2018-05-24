@@ -32,10 +32,11 @@ package model
 import (
 	"encoding/json"
 	"fmt"
-	"git-me/common"
-	"git-me/utils"
 	"io/ioutil"
 	"sort"
+
+	"github.com/yusank/git-me/common"
+	"github.com/yusank/git-me/utils"
 )
 
 type InnerTaskResp struct {

@@ -36,8 +36,8 @@ import (
 	"fmt"
 	"strings"
 
-	"git-me/common"
-	"git-me/utils"
+	"github.com/yusank/git-me/common"
+	"github.com/yusank/git-me/utils"
 )
 
 type BasicInfo struct {
@@ -95,7 +95,7 @@ func DownloadByURL(url string) (vid common.VideoData, err error) {
 			vid.Type = "video"
 		}
 		format := common.FormatData{
-			URLs:urlData,
+			URLs: urlData,
 			Size: int64(len(urlData)),
 		}
 		vid.Formats = []common.FormatData{format}
@@ -115,7 +115,7 @@ func DownloadByURL(url string) (vid common.VideoData, err error) {
 		}
 
 		format := common.FormatData{
-			URLs:urlData,
+			URLs: urlData,
 			Size: int64(len(urls)),
 		}
 		vid.Formats = []common.FormatData{format}

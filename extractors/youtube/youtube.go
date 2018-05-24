@@ -36,8 +36,8 @@ import (
 	"net/url"
 	"strings"
 
-	"git-me/common"
-	"git-me/utils"
+	"github.com/yusank/git-me/common"
+	"github.com/yusank/git-me/utils"
 )
 
 type BasicInfo struct {

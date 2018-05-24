@@ -37,8 +37,8 @@ import (
 	"strconv"
 	"strings"
 
-	"git-me/common"
-	"git-me/utils"
+	"github.com/yusank/git-me/common"
+	"github.com/yusank/git-me/utils"
 )
 
 const (
@@ -105,7 +105,6 @@ func genAPI(aid, cid string, bangumi bool, quality string, seasonType string) st
 	}
 	return api
 }
-
 
 func genURL(durl []dURLData) ([]common.URLData, int64) {
 	var (
@@ -184,7 +183,7 @@ func (bl BasicInfo) Download(url string) (vid common.VideoData, err error) {
 		}
 		bilibiliDownload(url, options, result)
 		vid = *result
-		err  = err1
+		err = err1
 		return
 	}
 	if options.Bangumi {
@@ -270,7 +269,7 @@ func bilibiliDownload(url string, options bilibiliOptions, result *common.VideoD
 
 	var formats []common.FormatData
 	for _, v := range format {
-		formats = append(formats,v)
+		formats = append(formats, v)
 	}
 
 	// get the title

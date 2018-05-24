@@ -45,7 +45,6 @@ func Match(pattern, text string) []string {
 	return reg.FindAllString(text, -1)
 }
 
-
 // MatchAll return all matching results
 func MatchAll(text, pattern string) [][]string {
 	re := regexp.MustCompile(pattern)
@@ -69,7 +68,6 @@ func MatchSlice(text string, patterns []string) []string {
 	}
 }
 
-
 // MatchOneOf match one of the patterns
 func MatchOneOf(text string, patterns ...string) []string {
 	var (
@@ -86,9 +84,8 @@ func MatchOneOf(text string, patterns ...string) []string {
 	return nil
 }
 
-
 // Min return min
-func Min(a,b int) int {
+func Min(a, b int) int {
 	if a > b {
 		return b
 	}

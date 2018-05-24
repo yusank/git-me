@@ -30,7 +30,7 @@
 package main
 
 import (
-	"git-me/cmd"
+	"github.com/yusank/git-me/cmd"
 )
 
 func main() {

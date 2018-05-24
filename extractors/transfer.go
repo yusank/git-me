@@ -31,17 +31,18 @@ package extractors
 
 import (
 	"fmt"
-	"git-me/common"
-	"git-me/extractors/bilibili"
-	"git-me/extractors/general"
-	"git-me/extractors/iqiyi"
-	"git-me/extractors/netease"
-	"git-me/extractors/xiami"
-	"git-me/extractors/youku"
-	"git-me/extractors/youtube"
-	"git-me/utils"
 	"log"
 	"net/url"
+
+	"github.com/yusank/git-me/common"
+	"github.com/yusank/git-me/extractors/bilibili"
+	"github.com/yusank/git-me/extractors/general"
+	"github.com/yusank/git-me/extractors/iqiyi"
+	"github.com/yusank/git-me/extractors/netease"
+	"github.com/yusank/git-me/extractors/xiami"
+	"github.com/yusank/git-me/extractors/youku"
+	"github.com/yusank/git-me/extractors/youtube"
+	"github.com/yusank/git-me/utils"
 )
 
 type CommonDownLoad func(url, outputDir string)
