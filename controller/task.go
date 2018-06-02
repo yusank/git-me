@@ -35,8 +35,6 @@ import (
 
 	"github.com/yusank/git-me/consts"
 	"github.com/yusank/git-me/models"
-
-	"github.com/astaxie/beego/validation"
 )
 
 type TaskController struct {
@@ -44,7 +42,7 @@ type TaskController struct {
 }
 
 type TaskInfo struct {
-	Id     string `json:"id" valid:"Required"`
+	Id     string `json:"id"`
 	UserId string `json:"userId"`
 	URL    string `json:"url"`
 	Sort   int    `json:"sort"`
@@ -166,14 +164,7 @@ func (tc *TaskController) UpdateTask() {
 		return
 	}
 
-	v := validation.Validation{}
-	b, err := v.Valid(&req)
-	if err != nil {
-		tc.OnError(err)
-		return
-	}
-
-	if !b {
+	if req.Id == "" {
 		tc.OnCustomError(consts.ErrInvalidParams)
 		return
 	}
@@ -223,19 +214,7 @@ func (tc *TaskController) DelTask() {
 		return
 	}
 
-	if user == nil {
-		tc.OnCustomError(consts.ErrUserNotFound)
-		return
-	}
-
-	v := validation.Validation{}
-	b, err := v.Valid(&req)
-	if err != nil {
-		tc.OnError(err)
-		return
-	}
-
-	if !b {
+	if req.Id == "" {
 		tc.OnCustomError(consts.ErrInvalidParams)
 		return
 	}

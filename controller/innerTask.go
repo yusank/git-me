@@ -36,8 +36,6 @@ import (
 	"github.com/yusank/git-me/models"
 
 	"github.com/yusank/git-me/extractors"
-
-	"github.com/astaxie/beego/validation"
 )
 
 // 终端版本上交记录
@@ -54,21 +52,13 @@ type InnerTaskReq struct {
 
 // 更改任务的状态
 func (ic *InnerController) HandleEvent() {
-	var req InnerTaskReq
+	var (
+		req InnerTaskReq
+		err error
+	)
+
 	if err := json.Unmarshal(ic.Ctx.Input.RequestBody, &req); err != nil {
 		ic.OnError(err)
-		return
-	}
-
-	valid := validation.Validation{}
-	b, err := valid.Valid(&req)
-	if err != nil {
-		ic.OnError(err)
-		return
-	}
-
-	if !b {
-		ic.OnCustomError(consts.ErrInvalidParams)
 		return
 	}
 

@@ -74,7 +74,7 @@ func init() {
 		),
 		beego.NSNamespace("/task",
 			beego.NSBefore(middleware.AuthLogin),
-			beego.NSRouter("/list/:id", &controller.TaskController{}, "get:ListTask"),
+			beego.NSRouter("/list", &controller.TaskController{}, "get:ListTask"),
 			beego.NSRouter("/add", &controller.TaskController{}, "post:AddTask"),
 			beego.NSRouter("/update", &controller.TaskController{}, "post:UpdateTask"),
 			beego.NSRouter("/del", &controller.TaskController{}, "post:DelTask"),

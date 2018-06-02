@@ -99,7 +99,7 @@ func (task *TaskInfo) Delete() error {
 
 func ListTaskInfo(userId string, page, size int) (list []*TaskInfo, err error) {
 	list = make([]*TaskInfo, 0)
-	err = TaskInfoCollection.FindId(bson.ObjectIdHex(userId)).Sort("createdAt").Skip((page - 1) * size).Limit(size).All(&list)
+	err = TaskInfoCollection.Find(bson.M{"userId": bson.ObjectIdHex(userId)}).Sort("createdAt").Skip((page - 1) * size).Limit(size).All(&list)
 
 	return
 }
@@ -110,7 +110,7 @@ func ListUnFinishedTaskInfo(userId string) (list []*TaskInfo, err error) {
 		"userId": bson.ObjectIdHex(userId),
 		"status": bson.M{"$ne": TaskStatusFinish},
 	}
-	err = TaskInfoCollection.FindId(query).All(&list)
+	err = TaskInfoCollection.Find(query).All(&list)
 
 	return
 }
