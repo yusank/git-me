@@ -172,7 +172,7 @@ func (vid VideoData) Download(refer string) {
 	bar.ShowFinalTime = true
 	bar.SetMaxWidth(1000)
 	bar.Start()
-	go MonitorSchedule(bar, refer)
+	//go MonitorSchedule(bar, refer)
 	if len(data.URLs) == 1 {
 		// only one fragment
 		data.urlSave(data.URLs[0], refer, title, vid.OutputDir, bar)
@@ -247,23 +247,24 @@ func (vid VideoData) Download(refer string) {
 	return
 }
 
-func MonitorSchedule(pb *pb.ProgressBar, uri string) {
-	for {
-		time.Sleep(1 * time.Second)
-		cur := pb.Get()
-		process := float64(cur) / float64(pb.Total) * 100
-
-		process = utils.RoundSpec(process, 2)
-		upload := UploadInfo{
-			URL:      uri,
-			Schedule: process,
-			Status:   TaskStatusDownlaoding,
-		}
-
-		ProcessChan <- upload
-
-		if pb.IsFinished() {
-			break
-		}
-	}
-}
+//
+//func MonitorSchedule(pb *pb.ProgressBar, uri string) {
+//	for {
+//		time.Sleep(1 * time.Second)
+//		cur := pb.Get()
+//		process := float64(cur) / float64(pb.Total) * 100
+//
+//		process = utils.RoundSpec(process, 2)
+//		upload := UploadInfo{
+//			URL:      uri,
+//			Schedule: process,
+//			Status:   TaskStatusDownlaoding,
+//		}
+//
+//		ProcessChan <- upload
+//
+//		if pb.IsFinished() {
+//			break
+//		}
+//	}
+//}
