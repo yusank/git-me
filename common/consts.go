@@ -67,7 +67,7 @@ var (
 	// user password
 	Pass string
 
-	FinishChan = make(chan UploadInfo)
+	ProcessChan = make(chan UploadInfo)
 )
 
 const (

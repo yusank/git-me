@@ -66,18 +66,19 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		// listen channel FinishChan and exitChan
+		// listen channel ProcessChan and exitChan
 		go func() {
 			for {
 				select {
-				case u := <-common.FinishChan:
+				case u := <-common.ProcessChan:
 					// only upload when have user account info
 					if common.Name != "" && common.Pass != "" {
 						resp := model.InnerTaskResp{
-							Name:  common.Name,
-							Pass:  utils.StringMd5(common.Pass),
-							URL:   u.URL,
-							Event: u.Status,
+							Name:     common.Name,
+							Pass:     utils.StringMd5(common.Pass),
+							URL:      u.URL,
+							Event:    u.Status,
+							Schedule: u.Schedule,
 						}
 
 						if err := model.UploadCurrentTaskStatus(resp); err != nil {
@@ -109,7 +110,8 @@ var RootCmd = &cobra.Command{
 			return
 		}
 
-		if len(args) < 1 {
+		if len(args) < 1 && len(tasks) < 1 {
+			fmt.Println("there is nothing in your task list.")
 			return
 		}
 
@@ -172,8 +174,6 @@ func handleUserTask() []string {
 	if common.Name == "" || common.Pass == "" {
 		return nil
 	}
-
-	fmt.Println(common.Name, common.Pass)
 
 	var u model.InnerTaskResp
 	u.Name = common.Name

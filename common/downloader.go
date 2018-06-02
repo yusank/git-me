@@ -150,10 +150,9 @@ func (vid VideoData) printInfo(format string) {
 
 // Download download urls
 func (vid VideoData) Download(refer string) {
-
 	var format, title string
 	title = utils.FileName(vid.Title)
-	data := vid.Formats[0]
+	data := vid.Formats[len(vid.Formats)-1]
 	ok := len(vid.Formats) != 0
 	if !ok {
 		log.Fatal("No format named " + format)
@@ -167,6 +166,7 @@ func (vid VideoData) Download(refer string) {
 	bar.ShowFinalTime = true
 	bar.SetMaxWidth(1000)
 	bar.Start()
+	go MonitorSchedule(bar, refer)
 	if len(data.URLs) == 1 {
 		// only one fragment
 		data.urlSave(data.URLs[0], refer, title, vid.OutputDir, bar)
@@ -175,7 +175,7 @@ func (vid VideoData) Download(refer string) {
 	}
 	wgp := utils.NewWaitGroupPool(16)
 	// multiple fragments
-	parts := []string{}
+	var parts []string
 	for index, url := range data.URLs {
 		partFileName := fmt.Sprintf("%s[%d]", title, index)
 		partFilePath := utils.FilePath(partFileName, url.Ext, vid.OutputDir, false)
@@ -239,4 +239,30 @@ func (vid VideoData) Download(refer string) {
 
 	fmt.Printf("合并完成 \n")
 	return
+}
+
+func MonitorSchedule(pb *pb.ProgressBar, uri string) {
+	for {
+		time.Sleep(100 * time.Microsecond)
+
+		cur := pb.Get()
+		process := float64(cur/pb.Total) * 100
+
+		upload := UploadInfo{
+			URL:      uri,
+			Schedule: process,
+			Status:   TaskStatusDownlaoding,
+		}
+
+		if pb.IsFinished() {
+			upload.Schedule = TaskStatusFinish
+			upload.Schedule = 100.0
+		}
+
+		ProcessChan <- upload
+
+		if pb.IsFinished() {
+			break
+		}
+	}
 }

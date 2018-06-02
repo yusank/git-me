@@ -40,10 +40,11 @@ import (
 )
 
 type InnerTaskResp struct {
-	Name  string `json:"name"`
-	Pass  string `json:"pass"`
-	Event int    `json:"event"`
-	URL   string `json:"url"`
+	Name     string  `json:"name"`
+	Pass     string  `json:"pass"`
+	Event    int     `json:"event"`
+	Schedule float64 `json:"schedule"`
+	URL      string  `json:"url"`
 }
 
 type InnerTaskReq struct {
@@ -67,8 +68,6 @@ func GetUserTask(p InnerTaskResp) (urls []string, err error) {
 		return
 	}
 
-	fmt.Println(string(b))
-
 	var req InnerTaskReq
 	if err = json.Unmarshal(b, &req); err != nil {
 		return
@@ -91,6 +90,10 @@ func GetUserTask(p InnerTaskResp) (urls []string, err error) {
 }
 
 func UploadCurrentTaskStatus(p InnerTaskResp) (err error) {
+	if p.Name == "" || p.Pass == "" {
+		return
+	}
+
 	body, err := json.Marshal(p)
 	if err != nil {
 		return

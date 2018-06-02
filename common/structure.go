@@ -67,6 +67,7 @@ type InnerTask struct {
 }
 
 type UploadInfo struct {
-	URL    string
-	Status int
+	URL      string
+	Status   int
+	Schedule float64
 }

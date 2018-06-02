@@ -67,15 +67,14 @@ func Foo(uri, output string, implement interface{}) {
 		"output": output,
 	}
 
-	upload := common.UploadInfo{
-		URL:    uri,
-		Status: common.TaskStatusFinish,
-	}
 	if err := common.DownloadByUrl(implement.(common.VideoExtractor), param); err != nil {
-		upload.Status = common.TaskStatusFail
-	}
+		upload := common.UploadInfo{
+			URL:    uri,
+			Status: common.TaskStatusFinish,
+		}
 
-	common.FinishChan <- upload
+		common.ProcessChan <- upload
+	}
 }
 
 func MatchUrl(videoURL, outputPath string) {
