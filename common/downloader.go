@@ -145,15 +145,20 @@ func (vid VideoData) printInfo(format string) {
 	fmt.Println(vid.Type)
 	cyan.Printf(" Stream:   ")
 	fmt.Println()
-	printStream(format, vid.Formats[0])
+	printStream(format, vid.Formats[format])
 }
 
 // Download download urls
 func (vid VideoData) Download(refer string) {
-
 	var format, title string
+	if Format == "" {
+		format = "default"
+	} else {
+		format = Format
+	}
+
 	title = utils.FileName(vid.Title)
-	data := vid.Formats[0]
+	data := vid.Formats[format]
 	ok := len(vid.Formats) != 0
 	if !ok {
 		log.Fatal("No format named " + format)
@@ -167,6 +172,7 @@ func (vid VideoData) Download(refer string) {
 	bar.ShowFinalTime = true
 	bar.SetMaxWidth(1000)
 	bar.Start()
+	go MonitorSchedule(bar, refer)
 	if len(data.URLs) == 1 {
 		// only one fragment
 		data.urlSave(data.URLs[0], refer, title, vid.OutputDir, bar)
@@ -175,7 +181,7 @@ func (vid VideoData) Download(refer string) {
 	}
 	wgp := utils.NewWaitGroupPool(16)
 	// multiple fragments
-	parts := []string{}
+	var parts []string
 	for index, url := range data.URLs {
 		partFileName := fmt.Sprintf("%s[%d]", title, index)
 		partFilePath := utils.FilePath(partFileName, url.Ext, vid.OutputDir, false)
@@ -239,4 +245,25 @@ func (vid VideoData) Download(refer string) {
 
 	fmt.Printf("合并完成 \n")
 	return
+}
+
+func MonitorSchedule(pb *pb.ProgressBar, uri string) {
+	for {
+		time.Sleep(1 * time.Second)
+		cur := pb.Get()
+		process := float64(cur) / float64(pb.Total) * 100
+
+		process = utils.RoundSpec(process, 2)
+		upload := UploadInfo{
+			URL:      uri,
+			Schedule: process,
+			Status:   TaskStatusDownlaoding,
+		}
+
+		ProcessChan <- upload
+
+		if pb.IsFinished() {
+			break
+		}
+	}
 }

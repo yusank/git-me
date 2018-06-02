@@ -63,7 +63,9 @@ func (gn BasicInfo) Download(url string) (vid common.VideoData, err error) {
 	format := common.FormatData{URLs: []common.URLData{urlData}}
 	vid.Site = ""
 	vid.Title = utils.FileName(exts[0])
-	vid.Formats = []common.FormatData{format}
+	vid.Formats = map[string]common.FormatData{
+		"default": format,
+	}
 
 	return
 }

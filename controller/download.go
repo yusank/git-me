@@ -93,7 +93,7 @@ func (dc *DownloaderController) ParseVideo() {
 
 	if di.Type == consts.DownloadTypeCheck {
 		var resp CheckResp
-		resp.IsUseful = len(vid.Formats) > 0 && len(vid.Formats[0].URLs) > 0
+		resp.IsUseful = len(vid.Formats) > 0 && len(vid.Formats["default"].URLs) > 0
 		dc.JSON(resp)
 		return
 	}
@@ -106,8 +106,8 @@ func (dc *DownloaderController) ParseVideo() {
 
 	go func() {
 		writer := io.MultiWriter(file)
-		if len(vid.Formats) > 0 {
-			for _, v := range vid.Formats[0].URLs {
+		if _, found := vid.Formats["default"]; found {
+			for _, v := range vid.Formats["default"].URLs {
 				ext = v.Ext
 				fmt.Println(ext)
 				resp, err = utils.HttpGet(v.URL, header)

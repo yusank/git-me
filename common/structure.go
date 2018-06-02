@@ -43,8 +43,9 @@ type VideoData struct {
 	// [URLData: {URL, Size, Ext}, ...]
 	// Some video files have multiple fragments
 	// and support for downloading multiple image files at once
-	Formats []FormatData `json:"formats"`
-	Type    string       `json:"type"`
+
+	Formats map[string]FormatData
+	Type    string
 }
 
 // FormatData data struct of every format
@@ -72,6 +73,7 @@ type InnerTask struct {
 }
 
 type UploadInfo struct {
-	URL    string
-	Status int
+	URL      string
+	Status   int
+	Schedule float64
 }

@@ -31,18 +31,17 @@ package extractors
 
 import (
 	"fmt"
+	"git-me/utils"
 	"net/url"
 
 	"github.com/yusank/git-me/extractors/bilibili"
 	"github.com/yusank/git-me/extractors/general"
 	"github.com/yusank/git-me/extractors/iqiyi"
-	"github.com/yusank/git-me/extractors/netease"
 	"github.com/yusank/git-me/extractors/xiami"
 	"github.com/yusank/git-me/extractors/youku"
 	"github.com/yusank/git-me/extractors/youtube"
 
 	"github.com/yusank/git-me/common"
-	"github.com/yusank/git-me/utils"
 )
 
 type CommonDownLoad func(url, outputDir string)
@@ -52,7 +51,6 @@ var (
 )
 
 func BeforeRun() {
-	TransferMap["163"] = netease.BasicInfo{}
 	TransferMap["youku"] = youku.BasicInfo{}
 	TransferMap["youtube"] = youtube.BasicInfo{}
 	TransferMap["xiami"] = xiami.BasicInfo{}
