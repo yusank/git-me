@@ -30,7 +30,6 @@
 package controller
 
 import (
-	"net/http"
 	"strings"
 
 	"github.com/yusank/git-me/consts"
@@ -43,7 +42,6 @@ type BasicController struct {
 }
 
 func (this *BasicController) OnCustomError(e consts.ErrorType) {
-	this.Ctx.ResponseWriter.WriteHeader(e.StatusCode)
 	this.Data["json"] = map[string]interface{}{
 		"errcode": e.ErrorCode,
 		"errmsg":  e.ErrorMsg,
@@ -52,7 +50,6 @@ func (this *BasicController) OnCustomError(e consts.ErrorType) {
 }
 
 func (this *BasicController) JSON(data interface{}) {
-	this.Ctx.ResponseWriter.WriteHeader(http.StatusOK)
 	this.Data["json"] = map[string]interface{}{
 		"errcode": 0,
 		"data":    data,

@@ -85,6 +85,7 @@ func GetHistory(userId, url string) (his *History, err error) {
 	err = HistoryCollection.Find(query).One(his)
 	if err == mgo.ErrNotFound {
 		err = nil
+		his = nil
 	}
 
 	return

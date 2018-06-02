@@ -107,7 +107,7 @@ func (uc *UserController) Login() {
 		return
 	}
 
-	uc.SetSession(consts.SessionUserID, user.Id)
+	uc.SetSession(consts.SessionUserID, user.Id.Hex())
 
 	uc.Data["json"] = map[string]interface{}{"errcode": consts.ErrCodeSuccess, "data": user}
 	uc.ServeJSON()

@@ -78,6 +78,7 @@ func GetCollectByUserID(userId, url string) (col *CollectInfo, err error) {
 	err = CollectCollection.Find(query).One(col)
 	if err == mgo.ErrNotFound {
 		err = nil
+		col = nil
 	}
 
 	return

@@ -62,15 +62,15 @@ func init() {
 			beego.NSRouter("/vid", &controller.DownloaderController{}, "get:ParseVideo"),
 		),
 
-		beego.NSNamespace("history",
+		beego.NSNamespace("/history",
 			beego.NSBefore(middleware.AuthLogin),
 			beego.NSRouter("/list", &controller.HistoryController{}, "get:List"),
 		),
 
-		beego.NSNamespace("collect",
+		beego.NSNamespace("/collect",
 			beego.NSBefore(middleware.AuthLogin),
 			beego.NSRouter("/list", &controller.CollectController{}, "get:List"),
-			beego.NSRouter("/add", &controller.CollectController{}, "get:AddCollect"),
+			beego.NSRouter("/add", &controller.CollectController{}, "post:AddCollect"),
 		),
 		beego.NSNamespace("/task",
 			beego.NSBefore(middleware.AuthLogin),
