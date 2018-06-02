@@ -45,6 +45,7 @@ type TaskInfo struct {
 	Status    int           `bson:"status"`
 	Sort      int           `bson:"sort"`
 	Type      int           `bson:"type"`
+	Schedule  float64       `bson:"schedule"`
 	CreatedAt int64         `bson:"createdAt"`
 	UpdateAt  int64         `bson:"updatedAt"`
 }

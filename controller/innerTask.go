@@ -44,10 +44,11 @@ type InnerController struct {
 }
 
 type InnerTaskReq struct {
-	Name  string `json:"name" valid:"Required"`
-	Pass  string `json:"pass" valid:"Required"`
-	Event int    `json:"event" valid:"Required"`
-	URL   string `json:"url" valid:"Required"`
+	Name     string  `json:"name" valid:"Required"`
+	Pass     string  `json:"pass" valid:"Required"`
+	Event    int     `json:"event" valid:"Required"`
+	Schedule float64 `json:"schedule"`
+	URL      string  `json:"url" valid:"Required"`
 }
 
 // 更改任务的状态
@@ -92,6 +93,10 @@ func (ic *InnerController) HandleEvent() {
 	if task.Status == models.TaskStatusFinish {
 		ic.OnCustomError(consts.ErrTaskFinish)
 		return
+	}
+
+	if req.Event == models.TaskStatusDownlaoding {
+		task.Schedule = req.Schedule
 	}
 
 	task.Status = req.Event
@@ -140,7 +145,7 @@ func (ic *InnerController) HandleEvent() {
 		return
 	}
 
-	ic.JSON("")
+	ic.JSON(nil)
 }
 
 // 列出未完成任务
