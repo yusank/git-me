@@ -38,7 +38,6 @@ import (
 	"github.com/yusank/git-me/extractors/bilibili"
 	"github.com/yusank/git-me/extractors/general"
 	"github.com/yusank/git-me/extractors/iqiyi"
-	"github.com/yusank/git-me/extractors/netease"
 	"github.com/yusank/git-me/extractors/xiami"
 	"github.com/yusank/git-me/extractors/youku"
 	"github.com/yusank/git-me/extractors/youtube"
@@ -52,7 +51,6 @@ var (
 )
 
 func BeforeRun() {
-	TransferMap["163"] = netease.BasicInfo{}
 	TransferMap["youku"] = youku.BasicInfo{}
 	TransferMap["youtube"] = youtube.BasicInfo{}
 	TransferMap["xiami"] = xiami.BasicInfo{}
@@ -67,14 +65,17 @@ func Foo(uri, output string, implement interface{}) {
 		"output": output,
 	}
 
-	if err := common.DownloadByUrl(implement.(common.VideoExtractor), param); err != nil {
-		upload := common.UploadInfo{
-			URL:    uri,
-			Status: common.TaskStatusFinish,
-		}
-
-		common.ProcessChan <- upload
+	upload := common.UploadInfo{
+		URL:      uri,
+		Status:   common.TaskStatusFinish,
+		Schedule: 100.0,
 	}
+	if err := common.DownloadByUrl(implement.(common.VideoExtractor), param); err != nil {
+		upload.Status = common.TaskStatusFail
+		upload.Schedule = 0.0
+	}
+
+	common.ProcessChan <- upload
 }
 
 func MatchUrl(videoURL, outputPath string) {

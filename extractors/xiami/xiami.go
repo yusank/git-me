@@ -124,7 +124,9 @@ func downloadMv(url string) (data common.VideoData, err error) {
 	format := common.FormatData{
 		URLs: []common.URLData{u},
 	}
-	data.Formats = append(data.Formats, format)
+	data.Formats = map[string]common.FormatData{
+		"default": format,
+	}
 
 	return
 }

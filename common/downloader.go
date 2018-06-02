@@ -145,14 +145,20 @@ func (vid VideoData) printInfo(format string) {
 	fmt.Println(vid.Type)
 	cyan.Printf(" Stream:   ")
 	fmt.Println()
-	printStream(format, vid.Formats[0])
+	printStream(format, vid.Formats[format])
 }
 
 // Download download urls
 func (vid VideoData) Download(refer string) {
 	var format, title string
+	if Format == "" {
+		format = "default"
+	} else {
+		format = Format
+	}
+
 	title = utils.FileName(vid.Title)
-	data := vid.Formats[len(vid.Formats)-1]
+	data := vid.Formats[format]
 	ok := len(vid.Formats) != 0
 	if !ok {
 		log.Fatal("No format named " + format)
@@ -243,20 +249,15 @@ func (vid VideoData) Download(refer string) {
 
 func MonitorSchedule(pb *pb.ProgressBar, uri string) {
 	for {
-		time.Sleep(100 * time.Microsecond)
-
+		time.Sleep(1 * time.Second)
 		cur := pb.Get()
-		process := float64(cur/pb.Total) * 100
+		process := float64(cur) / float64(pb.Total) * 100
 
+		process = utils.RoundSpec(process, 2)
 		upload := UploadInfo{
 			URL:      uri,
 			Schedule: process,
 			Status:   TaskStatusDownlaoding,
-		}
-
-		if pb.IsFinished() {
-			upload.Schedule = TaskStatusFinish
-			upload.Schedule = 100.0
 		}
 
 		ProcessChan <- upload

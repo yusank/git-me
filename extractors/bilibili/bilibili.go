@@ -267,11 +267,6 @@ func bilibiliDownload(url string, options bilibiliOptions, result *common.VideoD
 	format["default"] = format[defaultQuality]
 	delete(format, defaultQuality)
 
-	var formats []common.FormatData
-	for _, v := range format {
-		formats = append(formats, v)
-	}
-
 	// get the title
 	doc := utils.GetDoc(html)
 	title := utils.Title(doc)
@@ -282,6 +277,6 @@ func bilibiliDownload(url string, options bilibiliOptions, result *common.VideoD
 	result.Site = "哔哩哔哩 bilibili.com"
 	result.Title = title
 	result.Type = "video"
-	result.Formats = formats
+	result.Formats = format
 	return result
 }

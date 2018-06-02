@@ -43,7 +43,7 @@ type VideoData struct {
 	// [URLData: {URL, Size, Ext}, ...]
 	// Some video files have multiple fragments
 	// and support for downloading multiple image files at once
-	Formats []FormatData
+	Formats map[string]FormatData
 	Type    string
 }
 

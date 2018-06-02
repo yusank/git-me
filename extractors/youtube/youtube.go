@@ -49,8 +49,9 @@ func (yt BasicInfo) Prepare(params map[string]interface{}) error {
 }
 
 type args struct {
-	Title  string `json:"title"`
-	Stream string `json:"url_encoded_fmt_stream_map"`
+	Title   string `json:"title"`
+	Stream  string `json:"url_encoded_fmt_stream_map"`
+	Stream2 string `json:"url_encoded_fmt_stream_map"`
 }
 
 type assets struct {
@@ -66,6 +67,23 @@ func getSig(sig, js string) string {
 	fmt.Printf("sig:%s, js:%s \n", sig, js)
 	html := utils.GetDecodeHTML(fmt.Sprintf("https://www.youtube.com%s", js), nil)
 	return decipherTokens(getSigTokens(string(html)), sig)
+}
+
+func genSignedURL(streamURL string, stream url.Values, js string) string {
+	var realURL, sig string
+	if strings.Contains(streamURL, "signature=") {
+		// URL itself already has a signature parameter
+		realURL = streamURL
+	} else {
+		// URL has no signature parameter
+		sig = stream.Get("sig")
+		if sig == "" {
+			// Signature need decrypt
+			sig = getSig(stream.Get("s"), js)
+		}
+		realURL = fmt.Sprintf("%s&signature=%s", streamURL, sig)
+	}
+	return realURL
 }
 
 // Youtube download function
@@ -126,45 +144,96 @@ func youtubeDownload(uri string, result *common.VideoData) {
 	var youtube youtubeData
 	json.Unmarshal([]byte(ytplayer), &youtube)
 	title := youtube.Args.Title
+	format := extractVideoURLS(youtube, uri)
 	streams := strings.Split(youtube.Args.Stream, ",")
 	stream, _ := url.ParseQuery(streams[0]) // Best quality
 	quality := stream.Get("quality")
 	fmt.Println("[quality]", quality)
-	e := utils.MatchOneOf(stream.Get("type"), `video/(\w+);`)
-	ext := ""
-	if len(e) > 1 {
-		ext = e[1]
-	}
-	streamURL := stream.Get("url")
-	var realURL string
-	if strings.Contains(streamURL, "signature=") {
-		// URL itself already has a signature parameter
-		realURL = streamURL
-	} else {
-		// URL has no signature parameter
-		sig := stream.Get("sig")
-		if sig == "" {
-			// Signature need decrypt
-			sig = getSig(stream.Get("s"), youtube.Assets.JS)
-		}
-		realURL = fmt.Sprintf("%s&signature=%s", streamURL, sig)
-	}
-	size := utils.DownloadFileSize(realURL, uri)
-	urlData := common.URLData{
-		URL:  realURL,
-		Size: size,
-		Ext:  ext,
-	}
-
-	format := common.FormatData{
-		URLs:    []common.URLData{urlData},
-		Size:    urlData.Size,
-		Quality: quality,
-	}
 
 	result.Site = "YouTube youtube.com"
 	result.Title = utils.FileName(title)
 	fmt.Println("[youtube] title:", result.Title)
-	result.Formats = append(result.Formats, format)
+	result.Formats = format
 	return
+}
+
+func extractVideoURLS(data youtubeData, referer string) map[string]common.FormatData {
+	streams := strings.Split(data.Args.Stream, ",")
+	if data.Args.Stream == "" {
+		streams = strings.Split(data.Args.Stream2, ",")
+	}
+	var ext string
+	var audio common.URLData
+	format := map[string]common.FormatData{}
+
+	bestQualityURL, _ := url.ParseQuery(streams[0])
+	bestQualityItag := bestQualityURL.Get("itag")
+
+	for _, s := range streams {
+		stream, _ := url.ParseQuery(s)
+		itag := stream.Get("itag")
+		streamType := stream.Get("type")
+		isAudio := strings.HasPrefix(streamType, "audio/mp4")
+
+		if !isAudio {
+			continue
+		}
+
+		quality := stream.Get("quality_label")
+		if quality == "" {
+			quality = stream.Get("quality") // for url_encoded_fmt_stream_map
+		}
+		if quality != "" {
+			quality = fmt.Sprintf("%s %s", quality, streamType)
+		} else {
+			quality = streamType
+		}
+		if isAudio {
+			// audio file use m4a extension
+			ext = "m4a"
+		} else {
+			ext = utils.MatchOneOf(streamType, `(\w+)/(\w+);`)[2]
+		}
+		realURL := genSignedURL(stream.Get("url"), stream, data.Assets.JS)
+		if !strings.Contains(realURL, "ratebypass=yes") {
+			realURL += "&ratebypass=yes"
+		}
+		size := utils.DownloadFileSize(realURL, referer)
+		urlData := common.URLData{
+			URL:  realURL,
+			Size: size,
+			Ext:  ext,
+		}
+		if ext == "m4a" {
+			// Audio data for merging with video
+			audio = urlData
+		}
+		format[itag] = common.FormatData{
+			URLs:    []common.URLData{urlData},
+			Size:    size,
+			Quality: quality,
+		}
+	}
+
+	format["default"] = format[bestQualityItag]
+	delete(format, bestQualityItag)
+
+	// `url_encoded_fmt_stream_map`
+	if data.Args.Stream == "" {
+		return format
+	}
+
+	// Unlike `url_encoded_fmt_stream_map`, all videos in `adaptive_fmts` have no sound,
+	// we need download video and audio both and then merge them.
+	// Another problem is that even if we add `ratebypass=yes`, the download speed still slow sometimes.
+
+	// All videos here have no sound and need to be added separately
+	for itag, f := range format {
+		if strings.Contains(f.Quality, "video/") {
+			f.Size += audio.Size
+			f.URLs = append(f.URLs, audio)
+			format[itag] = f
+		}
+	}
+	return format
 }

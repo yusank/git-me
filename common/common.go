@@ -237,7 +237,7 @@ func (vid VideoData) DownloadURL(refer string) error {
 	if len(vid.Formats) < 1 {
 		return fmt.Errorf("empty url")
 	}
-	if len(vid.Formats[0].URLs) < 1 {
+	if len(vid.Formats["default"].URLs) < 1 {
 		return fmt.Errorf("empty url")
 	}
 	var wg sync.WaitGroup

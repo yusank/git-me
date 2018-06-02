@@ -126,7 +126,7 @@ func (iq BasicInfo) Download(url string) (common.VideoData, error) {
 	if videoDatas.Code != "A00000" {
 		log.Fatal("Can't play this video")
 	}
-	format := []common.FormatData{}
+	format := make(map[string]common.FormatData)
 	var urlData common.URLData
 	var size, totalSize int64
 	for _, video := range videoDatas.Data.Vidl {
@@ -145,11 +145,11 @@ func (iq BasicInfo) Download(url string) (common.VideoData, error) {
 			totalSize += size
 			urls = append(urls, urlData)
 		}
-		format = append(format, common.FormatData{
+		format[strconv.Itoa(video.Vd)] = common.FormatData{
 			URLs:    urls,
 			Size:    totalSize,
 			Quality: video.ScreenSize,
-		})
+		}
 	}
 	// get best quality
 	var videoData vidl

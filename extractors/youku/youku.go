@@ -149,41 +149,6 @@ func (yk BasicInfo) ups(vid string) {
 	return
 }
 
-func (yk BasicInfo) genData() ([]common.URLData, int64, string) {
-	var (
-		urls  []common.URLData
-		size  int64
-		index int
-	)
-
-	if len(yk.Data.Stream) == 0 {
-		log.Fatal("用户异常，请重新登录对应网站账号")
-	}
-
-	// get the best quality
-	for i, s := range yk.Data.Stream {
-		if s.Size > size {
-			size = s.Size
-			index = i
-		}
-	}
-	stream := yk.Data.Stream[index]
-	ext := strings.Split(
-		strings.Split(stream.Segs[0].URL, "?")[0],
-		".",
-	)
-	for _, data := range stream.Segs {
-		url := common.URLData{
-			URL:  data.URL,
-			Size: data.Size,
-			Ext:  ext[len(ext)-1],
-		}
-		urls = append(urls, url)
-	}
-	quality := fmt.Sprintf("%s %dx%d", stream.Type, stream.Width, stream.Height)
-	return urls, stream.Size, quality
-}
-
 // Download implement common.VideoExtractor
 func (yk BasicInfo) Download(url string) (data common.VideoData, err error) {
 	html := string(utils.GetDecodeHTML(url, nil))
@@ -197,18 +162,52 @@ func (yk BasicInfo) Download(url string) (data common.VideoData, err error) {
 	}
 
 	fmt.Printf("%+v \n", yk)
-	urls, size, quality := yk.genData()
-	format := common.FormatData{
-		URLs:    urls,
-		Size:    size,
-		Quality: quality,
-	}
+	format := yk.genData()
 	data = common.VideoData{
 		Site:    "优酷 youku.com",
 		Title:   title,
 		Type:    "video",
-		Formats: []common.FormatData{format},
+		Formats: format,
 	}
 
 	return
+}
+
+func (yk BasicInfo) genData() map[string]common.FormatData {
+	var (
+		size        int64
+		bestQuality string
+	)
+	format := map[string]common.FormatData{}
+	// get the best quality
+	for _, s := range yk.Data.Stream {
+		if s.Size > size {
+			size = s.Size
+			bestQuality = s.Type
+		}
+	}
+	for _, stream := range yk.Data.Stream {
+		ext := strings.Split(
+			strings.Split(stream.Segs[0].URL, "?")[0],
+			".",
+		)
+		var urls []common.URLData
+		for _, data := range stream.Segs {
+			url := common.URLData{
+				URL:  data.URL,
+				Size: data.Size,
+				Ext:  ext[len(ext)-1],
+			}
+			urls = append(urls, url)
+		}
+		quality := fmt.Sprintf("%s %dx%d", stream.Type, stream.Width, stream.Height)
+		format[stream.Type] = common.FormatData{
+			URLs:    urls,
+			Size:    stream.Size,
+			Quality: quality,
+		}
+	}
+	format["default"] = format[bestQuality]
+	delete(format, bestQuality)
+	return format
 }

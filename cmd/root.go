@@ -142,6 +142,7 @@ func init() {
 	RootCmd.Flags().StringVarP(&utils.Cookie, "cookie", "c", "", "use agency when you need.")
 	RootCmd.Flags().StringVarP(&common.Name, "name", "u", "", "account info of tool")
 	RootCmd.Flags().StringVarP(&common.Pass, "password", "p", "", "account pass.")
+	RootCmd.Flags().StringVarP(&common.Pass, "format", "f", "", "format of download media")
 }
 
 // initConfig reads in config file and ENV variables if set.
