@@ -33,7 +33,11 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"sort"
+
+	"github.com/yusank/git-me/common"
 	"github.com/yusank/git-me/consts"
+	"github.com/yusank/git-me/extractors"
 	"github.com/yusank/git-me/models"
 )
 
@@ -125,10 +129,36 @@ func (tc *TaskController) AddTask() {
 		return
 	}
 
+	form, err := extractors.MatchUrl(req.URL)
+	if err != nil || form == nil {
+		tc.OnCustomError(consts.ErrNilToDownload)
+		return
+	}
+
+	if len(form.Formats) == 0 {
+		tc.OnCustomError(consts.ErrNilToDownload)
+		return
+	}
+
+	var (
+		temp []common.FormatData
+	)
+	for _, v := range form.Formats {
+		temp = append(temp, v)
+	}
+
+	sort.Slice(temp, func(i, j int) bool {
+		return temp[i].Size > temp[j].Size
+	})
+
 	task = &models.TaskInfo{
-		UserId: user.Id,
-		URL:    req.URL,
-		Sort:   req.Sort,
+		UserId:  user.Id,
+		URL:     req.URL,
+		Sort:    req.Sort,
+		Site:    form.Site,
+		Title:   form.Title,
+		Size:    temp[0].Size,
+		Quality: temp[0].Quality,
 	}
 
 	if err := task.Insert(); err != nil {

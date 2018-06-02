@@ -39,15 +39,19 @@ import (
 )
 
 type TaskInfo struct {
-	Id        bson.ObjectId `bson:"_id"`
-	UserId    bson.ObjectId `bson:"userId"`
-	URL       string        `bson:"url"`
-	Status    int           `bson:"status"`
-	Sort      int           `bson:"sort"`
-	Type      int           `bson:"type"`
-	Schedule  float64       `bson:"schedule"`
-	CreatedAt int64         `bson:"createdAt"`
-	UpdateAt  int64         `bson:"updatedAt"`
+	Id        bson.ObjectId `json:"id" bson:"_id"`
+	UserId    bson.ObjectId `json:"userId" bson:"userId"`
+	URL       string        `json:"url" bson:"url"`
+	Status    int           `json:"status" bson:"status"`
+	Title     string        `json:"title" bson:"title"`
+	Site      string        `json:"site" bson:"site"`
+	Size      int64         `json:"size" bson:"size"`
+	Quality   string        `json:"quality" bson:"quality"`
+	Sort      int           `json:"sort" bson:"sort"`
+	Type      int           `json:"type" bson:"type"`
+	Schedule  float64       `json:"schedule" bson:"schedule"`
+	CreatedAt int64         `json:"createdAt" bson:"createdAt"`
+	UpdateAt  int64         `json:"updateAt" bson:"updatedAt"`
 }
 
 var (
@@ -60,7 +64,7 @@ const (
 
 const (
 	TaskStatusDefault = iota
-	TaskStatusDownlaoding
+	TaskStatusDownloading
 	TaskStatusFail
 	TaskStatusFinish
 )

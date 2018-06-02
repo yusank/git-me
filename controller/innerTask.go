@@ -32,8 +32,11 @@ package controller
 import (
 	"encoding/json"
 
+	"github.com/yusank/git-me/common"
 	"github.com/yusank/git-me/consts"
 	"github.com/yusank/git-me/models"
+
+	"sort"
 
 	"github.com/yusank/git-me/extractors"
 )
@@ -95,7 +98,7 @@ func (ic *InnerController) HandleEvent() {
 		return
 	}
 
-	if req.Event == models.TaskStatusDownlaoding {
+	if req.Event == models.TaskStatusDownloading {
 		task.Schedule = req.Schedule
 	}
 
@@ -122,7 +125,18 @@ func (ic *InnerController) HandleEvent() {
 				return
 			}
 
-			info := vid.Formats[0]
+			var (
+				temp []common.FormatData
+			)
+			for _, v := range vid.Formats {
+				temp = append(temp, v)
+			}
+
+			sort.Slice(temp, func(i, j int) bool {
+				return temp[i].Size > temp[j].Size
+			})
+
+			info := temp[0]
 			his = &models.History{
 				UserID:  user.Id,
 				URL:     req.URL,

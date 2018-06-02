@@ -37,7 +37,10 @@ import (
 	"github.com/yusank/git-me/extractors"
 	"github.com/yusank/git-me/models"
 
+	"sort"
+
 	"github.com/astaxie/beego/validation"
+	"github.com/yusank/git-me/common"
 )
 
 type CollectController struct {
@@ -102,13 +105,24 @@ func (cc *CollectController) AddCollect() {
 		return
 	}
 
+	var (
+		temp []common.FormatData
+	)
+	for _, v := range form.Formats {
+		temp = append(temp, v)
+	}
+
+	sort.Slice(temp, func(i, j int) bool {
+		return temp[i].Size > temp[j].Size
+	})
+
 	col = &models.CollectInfo{
 		UserId:  user.Id,
 		URL:     req.URL,
 		Site:    form.Site,
-		Size:    form.Formats[0].Size,
+		Size:    temp[0].Size,
 		Title:   form.Title,
-		Quality: form.Formats[0].Quality,
+		Quality: temp[0].Quality,
 	}
 
 	if err = col.Insert(); err != nil {
