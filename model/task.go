@@ -67,6 +67,8 @@ func GetUserTask(p InnerTaskResp) (urls []string, err error) {
 		return
 	}
 
+	fmt.Println(string(b))
+
 	var req InnerTaskReq
 	if err = json.Unmarshal(b, &req); err != nil {
 		return

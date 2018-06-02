@@ -73,7 +73,7 @@ var (
 const (
 	DefaultSize = 1024 * 64
 
-	Host         = "http://45.76.169.195:17717"
+	Host         = "http://127.0.0.1:17717"
 	ListRouter   = "/v1/inner/task-list"
 	UploadRouter = "/v1/inner/task-upload"
 )

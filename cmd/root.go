@@ -173,6 +173,8 @@ func handleUserTask() []string {
 		return nil
 	}
 
+	fmt.Println(common.Name, common.Pass)
+
 	var u model.InnerTaskResp
 	u.Name = common.Name
 	u.Pass = utils.StringMd5(common.Pass)
