@@ -100,6 +100,7 @@ func (ic *InnerController) HandleEvent() {
 	}
 
 	task.Status = req.Event
+
 	err = task.Update()
 
 	if req.Event == models.TaskStatusFinish {
