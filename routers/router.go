@@ -56,6 +56,7 @@ func init() {
 			beego.NSBefore(middleware.AuthLogin),
 			beego.NSRouter("/logout", &controller.UserController{}, "get:Logout"),
 			beego.NSRouter("/info", &controller.UserController{}, "post:UpdateInfo"),
+			beego.NSRouter("/info", &controller.UserController{}, "get:GetInfo"),
 			beego.NSRouter("/pass", &controller.UserController{}, "post:UpdatePass"),
 		),
 		beego.NSNamespace("/download",

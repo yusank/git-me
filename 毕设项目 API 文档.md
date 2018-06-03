@@ -74,6 +74,29 @@
 }
 ```
 
+### 获取用户信息
+
+| 路由 | /v1/user/info |
+| ---- | --------------- |
+| 方法 | GET             |
+
+成功返回：
+
+```json
+{
+    "errcode": 0,
+    "data": {
+        // 用户信息
+        "id": "5adc7dad65d4406e6e984585",
+        "name": "yusank",
+        "nickname": "iwElOCeE",
+        "email": "abc@gmail.com",
+        "headImg": "",
+        "createdAt": 1524399750,
+        "updatedAt": 0
+    }
+}
+```
 
 
 ### 修改用户信息

@@ -113,6 +113,23 @@ func (uc *UserController) Login() {
 	uc.ServeJSON()
 }
 
+func (uc *UserController) GetInfo() {
+	userID := uc.GetSession(consts.SessionUserID)
+	if userID == nil {
+		uc.OnCustomError(consts.ErrSessionNotFound)
+		return
+	}
+
+	user, err := models.GetUserById(userID.(string))
+	if err != nil {
+		uc.OnError(err)
+		return
+	}
+
+	uc.Data["json"] = map[string]interface{}{"errcode": consts.ErrCodeSuccess, "data": user}
+	uc.ServeJSON()
+}
+
 func (uc *UserController) UpdateInfo() {
 	var u models.User
 
