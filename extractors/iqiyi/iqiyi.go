@@ -165,6 +165,9 @@ func (iq BasicInfo) Download(url string) (common.VideoData, error) {
 		}
 	}
 
+	format["default"] = format[strconv.Itoa(videoData.Vd)]
+	delete(format, strconv.Itoa(videoData.Vd))
+
 	extractedData := common.VideoData{
 		Site:    "爱奇艺 iqiyi.com",
 		Title:   title,

@@ -152,6 +152,7 @@ func (vid VideoData) printInfo(format string) {
 func (vid VideoData) Download(refer string) {
 	var format, title string
 	if Format == "" {
+		// default is best quality
 		format = "default"
 	} else {
 		format = Format
