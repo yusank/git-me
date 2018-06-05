@@ -99,6 +99,7 @@ func (uc *UserController) Login() {
 	user, err = user.Get()
 	if err != nil {
 		uc.OnError(err)
+		return
 	}
 
 	passMd5 := utils.StringMd5(l.Pass)
