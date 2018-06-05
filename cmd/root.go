@@ -169,6 +169,16 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+
+	u := viper.Get("user")
+	if u != nil {
+		common.Name = u.(string)
+	}
+
+	p := viper.Get("pass")
+	if p != nil {
+		common.Pass = p.(string)
+	}
 }
 
 func handleUserTask() []string {
