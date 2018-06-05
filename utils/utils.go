@@ -40,7 +40,6 @@ import (
 
 // FileName Converts a string to a valid filename
 func FileName(name string) string {
-	// FIXME(iawia002) file name can't have /
 	name = strings.Replace(name, "/", " ", -1)
 	name = strings.Replace(name, "|", "-", -1)
 	name = strings.Replace(name, ": ", "：", -1)
