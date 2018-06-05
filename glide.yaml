@@ -1,0 +1,24 @@
+package: github.com/yusank/git-me
+import:
+- package: github.com/PuerkitoBio/goquery
+- package: github.com/astaxie/beego
+  subpackages:
+  - context
+  - plugins/cors
+  - session/redis
+  - validation
+- package: github.com/bitly/go-simplejson
+- package: github.com/cheggaaa/pb
+- package: github.com/fatih/color
+- package: github.com/garyburd/redigo
+  subpackages:
+  - redis
+- package: github.com/mitchellh/go-homedir
+- package: github.com/spf13/cobra
+- package: github.com/spf13/viper
+- package: golang.org/x/net/proxy
+  repo: https://github.com/golang/net
+  vcs: git
+- package: gopkg.in/mgo.v2
+  subpackages:
+  - bson
