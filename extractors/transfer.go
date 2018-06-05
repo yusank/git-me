@@ -31,7 +31,6 @@ package extractors
 
 import (
 	"fmt"
-	"git-me/utils"
 	"net/url"
 
 	"github.com/yusank/git-me/extractors/bilibili"
@@ -42,6 +41,7 @@ import (
 	"github.com/yusank/git-me/extractors/youtube"
 
 	"github.com/yusank/git-me/common"
+	"github.com/yusank/git-me/utils"
 )
 
 type CommonDownLoad func(url, outputDir string)

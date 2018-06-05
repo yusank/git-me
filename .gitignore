@@ -4,3 +4,4 @@ git-me
 *.mp4
 *.sh
 *.conf
+vendor/

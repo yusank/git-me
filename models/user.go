@@ -44,6 +44,8 @@ type User struct {
 	Name      string        `json:"name" bson:"name"`
 	Nickname  string        `json:"nickname" bson:"nickname"`
 	Email     string        `json:"email" bson:"email"`
+	Sex       int           `json:"sex" bson:"sex"`
+	Birthday  int64         `json:"birthDay" bson:"birthDay"`
 	Password  string        `json:"-" bson:"password"`
 	HeadImg   string        `json:"headImg" bson:"headImg"`
 	CreatedAt int64         `json:"createdAt" bson:"createdAt"`
