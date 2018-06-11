@@ -147,8 +147,8 @@ func (bl BasicInfo) Prepare(params map[string]interface{}) error {
 	return nil
 }
 
-// Download bilibili main download function
-func (bl BasicInfo) Download(url string) (vid common.VideoData, err error) {
+// ParseVideo bilibili main download function
+func (bl BasicInfo) ParseVideo(url string) (vid common.VideoData, err error) {
 	result := new(common.VideoData)
 	var options bilibiliOptions
 	if strings.Contains(url, "bangumi") {

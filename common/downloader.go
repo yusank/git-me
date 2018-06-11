@@ -143,12 +143,20 @@ func (vid VideoData) printInfo(format string) {
 	fmt.Println(vid.Title)
 	cyan.Printf(" Type:      ")
 	fmt.Println(vid.Type)
-	cyan.Printf(" Stream:   ")
-	fmt.Println()
-	printStream(format, vid.Formats[format])
+	if InfoOnly {
+		cyan.Printf(" Streams:   ")
+		fmt.Println("# All available quality")
+		for k, data := range vid.Formats {
+			printStream(k, data)
+		}
+	} else {
+		cyan.Printf(" Stream:   ")
+		fmt.Println()
+		printStream(format, vid.Formats[format])
+	}
 }
 
-// Download download urls
+// ParseVideo download urls
 func (vid VideoData) Download(refer string) {
 	var format, title string
 	if Format == "" {
@@ -168,6 +176,10 @@ func (vid VideoData) Download(refer string) {
 		data.calculateTotalSize()
 	}
 	vid.printInfo(format)
+	if InfoOnly {
+		return
+	}
+
 	bar := pb.New64(data.Size).SetUnits(pb.U_BYTES).SetRefreshRate(time.Millisecond * 10)
 	bar.ShowSpeed = true
 	bar.ShowFinalTime = true

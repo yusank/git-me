@@ -150,7 +150,7 @@ func (yk BasicInfo) ups(vid string) {
 }
 
 // Download implement common.VideoExtractor
-func (yk BasicInfo) Download(url string) (data common.VideoData, err error) {
+func (yk BasicInfo) ParseVideo(url string) (data common.VideoData, err error) {
 	html := string(utils.GetDecodeHTML(url, nil))
 	// get the title
 	doc := utils.GetDoc(html)

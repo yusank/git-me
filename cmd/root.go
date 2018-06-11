@@ -143,6 +143,7 @@ func init() {
 	RootCmd.Flags().StringVarP(&common.Name, "name", "u", "", "account info of tool")
 	RootCmd.Flags().StringVarP(&common.Pass, "password", "p", "", "account pass.")
 	RootCmd.Flags().StringVarP(&common.Pass, "format", "f", "", "format of download media")
+	RootCmd.Flags().StringVarP(&common.Pass, "info", "i", "", "display all available format for choice")
 }
 
 // initConfig reads in config file and ENV variables if set.

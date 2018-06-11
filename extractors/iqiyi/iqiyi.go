@@ -90,7 +90,7 @@ func getIqiyiData(tvid, vid string) iqiyi {
 }
 
 // Iqiyi download function
-func (iq BasicInfo) Download(url string) (common.VideoData, error) {
+func (iq BasicInfo) ParseVideo(url string) (common.VideoData, error) {
 	html := utils.GetRequestStr(url, iqiyiReferer)
 	tvid := utils.MatchOneOf(
 		url,

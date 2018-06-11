@@ -60,11 +60,7 @@ type ResourceString struct {
 	InnerText  string   `xml:",innerxml"`
 }
 
-func (xm BasicInfo) Prepare(Params map[string]interface{}) error {
-	return nil
-}
-
-func (xm BasicInfo) Download(url string) (common.VideoData, error) {
+func (xm BasicInfo) ParseVideo(url string) (common.VideoData, error) {
 	// albums
 
 	// collections

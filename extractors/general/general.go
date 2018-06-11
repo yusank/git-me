@@ -46,7 +46,7 @@ func (gn BasicInfo) Prepare(params map[string]interface{}) error {
 	return nil
 }
 
-func (gn BasicInfo) Download(url string) (vid common.VideoData, err error) {
+func (gn BasicInfo) ParseVideo(url string) (vid common.VideoData, err error) {
 	exts := strings.Split(url, ".")
 	ext := ""
 	if len(exts) > 1 {

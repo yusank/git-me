@@ -44,10 +44,6 @@ type BasicInfo struct {
 	Url string
 }
 
-func (yt BasicInfo) Prepare(params map[string]interface{}) error {
-	return nil
-}
-
 type args struct {
 	Title   string `json:"title"`
 	Stream  string `json:"url_encoded_fmt_stream_map"`
@@ -87,7 +83,7 @@ func genSignedURL(streamURL string, stream url.Values, js string) string {
 }
 
 // Youtube download function
-func (yt BasicInfo) Download(url string) (vid common.VideoData, err error) {
+func (yt BasicInfo) ParseVideo(url string) (vid common.VideoData, err error) {
 	result := new(common.VideoData)
 
 	if !common.Playlist {
