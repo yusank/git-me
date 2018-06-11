@@ -80,7 +80,7 @@ const (
 
 const (
 	TaskStatusDefault = iota
-	TaskStatusDownlaoding
+	TaskStatusDownloading
 	TaskStatusFail
 	TaskStatusFinish
 )

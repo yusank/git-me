@@ -258,7 +258,7 @@ func MonitorSchedule(pb *pb.ProgressBar, uri string) {
 		upload := UploadInfo{
 			URL:      uri,
 			Schedule: process,
-			Status:   TaskStatusDownlaoding,
+			Status:   TaskStatusFinish,
 		}
 
 		ProcessChan <- upload
