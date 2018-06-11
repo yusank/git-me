@@ -69,13 +69,11 @@ func GetUserTask(p InnerTaskResp) (urls []string, err error) {
 	}
 
 	var req InnerTaskReq
-	fmt.Println(string(b))
 	if err = json.Unmarshal(b, &req); err != nil {
 		return
 	}
 
 	if req.ErrCode != 0 {
-		fmt.Println(req)
 		err = fmt.Errorf("inner error, please contect developer")
 		return
 	}
@@ -117,7 +115,6 @@ func UploadCurrentTaskStatus(p InnerTaskResp) (err error) {
 	}
 
 	if req.ErrCode != 0 {
-		fmt.Println(req)
 		err = fmt.Errorf("inner error, please contect developer")
 		return
 	}

@@ -163,7 +163,7 @@ func initConfig() {
 		viper.SetConfigName(".cobra")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	//viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {

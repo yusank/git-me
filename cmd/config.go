@@ -61,9 +61,9 @@ var configCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	RootCmd.AddCommand(configCmd)
-}
+//func init() {
+//	RootCmd.AddCommand(configCmd)
+//}
 
 // initConfig reads in config file and ENV variables if set.
 func addToConfigFile(key, value string) {
