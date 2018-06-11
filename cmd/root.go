@@ -56,9 +56,16 @@ var (
 var RootCmd = &cobra.Command{
 	Use:   "git-me",
 	Short: "git-me, Give It To Me.",
-	Long: `git-me is a command-line tool which provide download service.
-	This tool has nothing to do with git or any other version control tool.
-	Git-me only focus on get media from web site to your computer.`,
+	Long: `	
+	git-me is a command-line tool which provide download service.
+	This tool has nothing to do with GIT or any other version control tool.
+	Git-me only focus on get media from web site to your computer.
+
+	Here is simple use example:
+		git-me https://bilibili.com/ae232434
+
+	Contact with author if you get any trouble  while using this tool.
+	Yusank - yusankurban@gmail.com`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if common.Name == "" && len(args) < 1 {
 			return errors.New("requires at least one arg")
@@ -136,14 +143,14 @@ func init() {
 	// PersistentFlags 是全局参数，即在所有的子命令也有效
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 	RootCmd.Flags().StringP("author", "a", "YusanK", "Author name for copyright attribution")
-	RootCmd.Flags().StringVarP(&OutputDir, "outputDir", "o", ".", "The path you want save the file.")
-	RootCmd.Flags().StringVarP(&utils.HttpProxy, "proxyPort", "x", "", "use agency when you need.")
-	RootCmd.Flags().StringVarP(&utils.Socks5Proxy, "socketProxy", "s", "", "use agency when you need.")
+	RootCmd.Flags().StringVarP(&OutputDir, "outputDir", "o", "current dir.", "The path you want save the file.")
+	RootCmd.Flags().StringVarP(&utils.HttpProxy, "proxyPort", "x", "", "use http proxy agency when you need.")
+	RootCmd.Flags().StringVarP(&utils.Socks5Proxy, "socketProxy", "s", "", "use socket proxy agency when you need.")
 	RootCmd.Flags().StringVarP(&utils.Cookie, "cookie", "c", "", "use agency when you need.")
 	RootCmd.Flags().StringVarP(&common.Name, "name", "u", "", "account info of tool")
 	RootCmd.Flags().StringVarP(&common.Pass, "password", "p", "", "account pass.")
-	RootCmd.Flags().StringVarP(&common.Pass, "format", "f", "", "format of download media")
-	RootCmd.Flags().StringVarP(&common.Pass, "info", "i", "", "display all available format for choice")
+	RootCmd.Flags().StringVarP(&common.Format, "format", "f", "best quality", "format of download media")
+	RootCmd.Flags().BoolVarP(&common.InfoOnly, "info", "i", false, "display all available format for choice")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -180,6 +187,8 @@ func initConfig() {
 	if p != nil {
 		common.Pass = p.(string)
 	}
+
+	fmt.Println(common.Name, common.Pass)
 }
 
 func handleUserTask() []string {

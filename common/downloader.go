@@ -119,7 +119,7 @@ func (data FormatData) urlSave(
 }
 
 func printStream(k string, data FormatData) {
-	blue := color.New(color.FgBlue)
+	blue := color.New(color.FgHiYellow)
 	cyan := color.New(color.FgCyan)
 	blue.Println(fmt.Sprintf("     [%s]  -------------------", k))
 	if data.Quality != "" {
@@ -131,6 +131,8 @@ func printStream(k string, data FormatData) {
 		data.calculateTotalSize()
 	}
 	fmt.Printf("%.2f MiB (%d Bytes)\n", float64(data.Size)/(1024*1024), data.Size)
+	cyan.Printf("     # download with: ")
+	fmt.Println("git-me -f " + k + " \"URL\"")
 	fmt.Println()
 }
 
