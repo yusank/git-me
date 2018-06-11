@@ -31,7 +31,6 @@ package routers
 
 import (
 	"github.com/yusank/git-me/controller"
-	"github.com/yusank/git-me/middleware"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
@@ -47,34 +46,35 @@ func init() {
 		AllowCredentials: true,
 	}))
 
+	//beego.Router("/v1/download/vid", &controller.DownloadController{}, "get:General")
+	//beego.Get("/test", func(context *context.Context) {
+	//	context.ResponseWriter.Write([]byte("success"))
+	//})
+
 	ns := beego.NewNamespace("/v1",
+		beego.NSNamespace("/download",
+			beego.NSRouter("/vid", &controller.DownloadController{}, "get:General"),
+		),
 		beego.NSNamespace("/r",
 			beego.NSRouter("/login", &controller.UserController{}, "post:Login"),
 			beego.NSRouter("/register", &controller.UserController{}, "post:Register"),
 		),
 		beego.NSNamespace("/user",
-			beego.NSBefore(middleware.AuthLogin),
 			beego.NSRouter("/logout", &controller.UserController{}, "get:Logout"),
 			beego.NSRouter("/info", &controller.UserController{}, "post:UpdateInfo"),
 			beego.NSRouter("/info", &controller.UserController{}, "get:GetInfo"),
 			beego.NSRouter("/pass", &controller.UserController{}, "post:UpdatePass"),
 		),
-		beego.NSNamespace("/download",
-			beego.NSRouter("/vid", &controller.DownloaderController{}, "get:ParseVideo"),
-		),
 
 		beego.NSNamespace("/history",
-			beego.NSBefore(middleware.AuthLogin),
 			beego.NSRouter("/list", &controller.HistoryController{}, "get:List"),
 		),
 
 		beego.NSNamespace("/collect",
-			beego.NSBefore(middleware.AuthLogin),
 			beego.NSRouter("/list", &controller.CollectController{}, "get:List"),
 			beego.NSRouter("/add", &controller.CollectController{}, "post:AddCollect"),
 		),
 		beego.NSNamespace("/task",
-			beego.NSBefore(middleware.AuthLogin),
 			beego.NSRouter("/list", &controller.TaskController{}, "get:ListTask"),
 			beego.NSRouter("/add", &controller.TaskController{}, "post:AddTask"),
 			beego.NSRouter("/update", &controller.TaskController{}, "post:UpdateTask"),

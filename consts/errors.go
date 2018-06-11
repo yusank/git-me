@@ -54,11 +54,12 @@ func MakeError(err error) (e ErrorType) {
 
 var (
 	ErrInvalidParams       = NewError(200, 400, "参数错误")
+	ErrInvalidUrl          = NewError(200, 400, "非法的 url")
 	ErrUserNotFound        = NewError(200, 400, "用户未找到")
 	ErrInvalidUserName     = NewError(200, 400, "非法的用户名")
 	ErrInvalidEmail        = NewError(200, 400, "非法的邮箱")
 	ErrInvalidPass         = NewError(200, 400, "非法的密码")
-	ErrSessionNotFound     = NewError(200, 403, "session不存在")
+	ErrSessionNotFound     = NewError(200, 403, "用户 id 为空")
 	ErrInvalidAccountOrPwd = NewError(200, 400, "账号或密码错误")
 	ErrIpCannotFound       = NewError(200, 400, "ip 无法获取")
 	ErrSign                = NewError(200, 400, "签名错误")

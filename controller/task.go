@@ -53,13 +53,13 @@ type TaskInfo struct {
 }
 
 func (tc *TaskController) ListTask() {
-	uid := tc.GetSession(consts.SessionUserID)
-	if uid == nil {
+	uid := tc.GetString("userId")
+	if uid == "" {
 		tc.OnCustomError(consts.ErrNeedLogin)
 		return
 	}
 
-	user, err := models.GetUserById(uid.(string))
+	user, err := models.GetUserById(uid)
 	if err != nil {
 		tc.OnError(err)
 		return
@@ -101,13 +101,13 @@ func (tc *TaskController) AddTask() {
 		return
 	}
 
-	uid := tc.GetSession(consts.SessionUserID)
-	if uid == nil {
+	uid := tc.GetString("userId")
+	if uid == "" {
 		tc.OnCustomError(consts.ErrNeedLogin)
 		return
 	}
 
-	user, err := models.GetUserById(uid.(string))
+	user, err := models.GetUserById(uid)
 	if err != nil {
 		tc.OnError(err)
 		return
@@ -118,7 +118,7 @@ func (tc *TaskController) AddTask() {
 		return
 	}
 
-	task, err := models.GetTaskInfoByUserAndUrl(uid.(string), req.URL)
+	task, err := models.GetTaskInfoByUserAndUrl(uid, req.URL)
 	if err != nil {
 		tc.OnError(err)
 		return
@@ -177,13 +177,13 @@ func (tc *TaskController) UpdateTask() {
 		return
 	}
 
-	uid := tc.GetSession(consts.SessionUserID)
-	if uid == nil {
+	uid := tc.GetString("userId")
+	if uid == "" {
 		tc.OnCustomError(consts.ErrNeedLogin)
 		return
 	}
 
-	user, err := models.GetUserById(uid.(string))
+	user, err := models.GetUserById(uid)
 	if err != nil {
 		tc.OnError(err)
 		return
@@ -232,13 +232,13 @@ func (tc *TaskController) DelTask() {
 		return
 	}
 
-	uid := tc.GetSession(consts.SessionUserID)
-	if uid == nil {
+	uid := tc.GetString("userId")
+	if uid == "" {
 		tc.OnCustomError(consts.ErrNeedLogin)
 		return
 	}
 
-	user, err := models.GetUserById(uid.(string))
+	user, err := models.GetUserById(uid)
 	if err != nil {
 		tc.OnError(err)
 		return

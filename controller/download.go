@@ -30,7 +30,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -43,7 +42,7 @@ import (
 	"github.com/yusank/git-me/utils"
 )
 
-type DownloaderController struct {
+type DownloadController struct {
 	BasicController
 }
 
@@ -56,7 +55,7 @@ type CheckResp struct {
 	IsUseful bool `json:"isUseful"`
 }
 
-func (dc *DownloaderController) ParseVideo() {
+func (dc *DownloadController) General() {
 	var (
 		di      DownloadInfo
 		resp    *http.Response
@@ -64,14 +63,13 @@ func (dc *DownloaderController) ParseVideo() {
 		finish  bool
 		now     = time.Now().Unix()
 	)
-	if err := json.Unmarshal(dc.Ctx.Input.RequestBody, &di); err != nil {
-		dc.OnError(err)
-		return
-	}
+
+	di.URL = dc.GetString("url")
+	di.Type, _ = dc.GetInt("type")
 
 	//di.URL = "https://www.bilibili.com/video/av23606332/?spm_id_from=333.334.bili_game.4"
-	uid := dc.GetSession(consts.SessionUserID)
-	if uid == nil {
+	uid := dc.GetString("userId")
+	if uid == "" {
 		ip = dc.GetIp()
 		if ip == "" {
 			dc.OnCustomError(consts.ErrIpCannotFound)
@@ -87,7 +85,7 @@ func (dc *DownloaderController) ParseVideo() {
 
 	vid, err := extractors.MatchUrl(di.URL)
 	if err != nil {
-		dc.OnError(err)
+		dc.OnCustomError(consts.ErrInvalidUrl)
 		return
 	}
 

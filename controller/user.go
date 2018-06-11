@@ -108,20 +108,20 @@ func (uc *UserController) Login() {
 		return
 	}
 
-	uc.SetSession(consts.SessionUserID, user.Id.Hex())
+	//uc.SetSession(consts.SessionUserID, user.Id.Hex())
 
 	uc.Data["json"] = map[string]interface{}{"errcode": consts.ErrCodeSuccess, "data": user}
 	uc.ServeJSON()
 }
 
 func (uc *UserController) GetInfo() {
-	userID := uc.GetSession(consts.SessionUserID)
-	if userID == nil {
+	userID := uc.GetString("userId")
+	if userID == "" {
 		uc.OnCustomError(consts.ErrSessionNotFound)
 		return
 	}
 
-	user, err := models.GetUserById(userID.(string))
+	user, err := models.GetUserById(userID)
 	if err != nil {
 		uc.OnError(err)
 		return
@@ -226,11 +226,11 @@ func (uc *UserController) UpdatePass() {
 }
 
 func (uc *UserController) Logout() {
-	userID := uc.GetSession(consts.SessionUserID)
-	if userID == nil {
-		uc.OnCustomError(consts.ErrSessionNotFound)
-		return
-	}
+	//userID := uc.GetSession(consts.SessionUserID)
+	//if userID == nil {
+	//	uc.OnCustomError(consts.ErrSessionNotFound)
+	//	return
+	//}
 
 	uc.DestroySession()
 	uc.JSON("success")

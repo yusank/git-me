@@ -48,13 +48,13 @@ type CollectController struct {
 }
 
 func (cc *CollectController) AddCollect() {
-	uid := cc.GetSession(consts.SessionUserID)
-	if uid == nil {
+	uid := cc.GetString("userId")
+	if uid == "" {
 		cc.OnCustomError(consts.ErrNeedLogin)
 		return
 	}
 
-	user, err := models.GetUserById(uid.(string))
+	user, err := models.GetUserById(uid)
 	if err != nil {
 		cc.OnError(err)
 		return
@@ -134,13 +134,13 @@ func (cc *CollectController) AddCollect() {
 }
 
 func (cc *CollectController) List() {
-	uid := cc.GetSession(consts.SessionUserID)
-	if uid == nil {
+	uid := cc.GetString("userId")
+	if uid == "" {
 		cc.OnCustomError(consts.ErrNeedLogin)
 		return
 	}
 
-	user, err := models.GetUserById(uid.(string))
+	user, err := models.GetUserById(uid)
 	if err != nil {
 		cc.OnError(err)
 		return

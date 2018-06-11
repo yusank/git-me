@@ -41,13 +41,13 @@ type HistoryController struct {
 }
 
 func (hc *HistoryController) List() {
-	uid := hc.GetSession(consts.SessionUserID)
-	if uid == nil {
+	uid := hc.GetString("userId")
+	if uid == "" {
 		hc.OnCustomError(consts.ErrNeedLogin)
 		return
 	}
 
-	user, err := models.GetUserById(uid.(string))
+	user, err := models.GetUserById(uid)
 	if err != nil {
 		hc.OnError(err)
 		return
