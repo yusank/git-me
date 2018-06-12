@@ -47,21 +47,32 @@ func (gn BasicInfo) Prepare(params map[string]interface{}) error {
 }
 
 func (gn BasicInfo) ParseVideo(url string) (vid common.VideoData, err error) {
+	var (
+		ext, site string
+		title     = "downloadFile"
+	)
 	exts := strings.Split(url, ".")
-	ext := ""
+	names := strings.Split(url, "/")
 	if len(exts) > 1 {
 		ext = exts[len(exts)-1]
+		tempName := strings.Split(exts[len(exts)-2], "/")
+		title = tempName[len(tempName)-1]
+	}
+
+	if len(names) > 2 {
+		site = names[2]
 	}
 
 	urlData := common.URLData{
 		URL:  url,
-		Size: common.DefaultSize,
+		Size: utils.DownloadFileSize(url, ""),
 		Ext:  ext,
 	}
 
 	format := common.FormatData{URLs: []common.URLData{urlData}}
-	vid.Site = ""
-	vid.Title = utils.FileName(exts[0])
+	vid.Site = site
+	vid.Type = ext
+	vid.Title = title
 	vid.Formats = map[string]common.FormatData{
 		"default": format,
 	}

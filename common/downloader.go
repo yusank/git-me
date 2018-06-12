@@ -132,7 +132,7 @@ func printStream(k string, data FormatData) {
 	}
 	fmt.Printf("%.2f MiB (%d Bytes)\n", float64(data.Size)/(1024*1024), data.Size)
 	cyan.Printf("     # download with: ")
-	fmt.Println("git-me -f " + k + " \"URL\"")
+	fmt.Println("git-me -f " + k + " [URL]")
 	fmt.Println()
 }
 

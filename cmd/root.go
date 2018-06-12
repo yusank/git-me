@@ -143,13 +143,13 @@ func init() {
 	// PersistentFlags 是全局参数，即在所有的子命令也有效
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 	RootCmd.Flags().StringP("author", "a", "YusanK", "Author name for copyright attribution")
-	RootCmd.Flags().StringVarP(&OutputDir, "outputDir", "o", "current dir.", "The path you want save the file.")
+	RootCmd.Flags().StringVarP(&OutputDir, "outputDir", "o", "", "The path you want save the file (default is current dir).")
 	RootCmd.Flags().StringVarP(&utils.HttpProxy, "proxyPort", "x", "", "use http proxy agency when you need.")
 	RootCmd.Flags().StringVarP(&utils.Socks5Proxy, "socketProxy", "s", "", "use socket proxy agency when you need.")
 	RootCmd.Flags().StringVarP(&utils.Cookie, "cookie", "c", "", "use agency when you need.")
 	RootCmd.Flags().StringVarP(&common.Name, "name", "u", "", "account info of tool")
 	RootCmd.Flags().StringVarP(&common.Pass, "password", "p", "", "account pass.")
-	RootCmd.Flags().StringVarP(&common.Format, "format", "f", "best quality", "format of download media")
+	RootCmd.Flags().StringVarP(&common.Format, "format", "f", "", "format of download media(default is best quality).")
 	RootCmd.Flags().BoolVarP(&common.InfoOnly, "info", "i", false, "display all available format for choice")
 }
 
