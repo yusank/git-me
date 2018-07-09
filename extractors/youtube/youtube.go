@@ -46,7 +46,7 @@ type BasicInfo struct {
 
 type args struct {
 	Title   string `json:"title"`
-	Stream  string `json:"url_encoded_fmt_stream_map"`
+	Stream  string `json:"adaptive_fmts"`
 	Stream2 string `json:"url_encoded_fmt_stream_map"`
 }
 
@@ -59,10 +59,18 @@ type youtubeData struct {
 	Assets assets `json:"assets"`
 }
 
+const referer = "https://www.youtube.com"
+
+var tokensCache = make(map[string][]string)
+
 func getSig(sig, js string) string {
-	fmt.Printf("sig:%s, js:%s \n", sig, js)
-	html := utils.GetDecodeHTML(fmt.Sprintf("https://www.youtube.com%s", js), nil)
-	return decipherTokens(getSigTokens(string(html)), sig)
+	u := fmt.Sprintf("https://www.youtube.com%s", js)
+	tokens, ok := tokensCache[u]
+	if !ok {
+		tokens = getSigTokens(utils.GetRequestStr(u, referer))
+		tokensCache[u] = tokens
+	}
+	return decipherTokens(tokens, sig)
 }
 
 func genSignedURL(streamURL string, stream url.Values, js string) string {
@@ -112,7 +120,6 @@ func (yt BasicInfo) ParseVideo(url string) (vid common.VideoData, err error) {
 }
 
 func youtubeDownload(uri string, result *common.VideoData) {
-	fmt.Println("[uri]", uri)
 	vid := utils.MatchOneOf(
 		uri,
 		`watch\?v=([^/&]+)`,
@@ -123,12 +130,10 @@ func youtubeDownload(uri string, result *common.VideoData) {
 	if vid == nil {
 		log.Fatal("Can't find vid")
 	}
-	fmt.Println("[vid]", vid)
 	videoURL := fmt.Sprintf(
 		"https://www.youtube.com/watch?v=%s&gl=US&hl=en&has_verified=1&bpctr=9999999999",
 		vid[1],
 	)
-	fmt.Println("[vidURL]", videoURL)
 	html := string(utils.GetDecodeHTML(videoURL, nil))
 	//fmt.Println("[html]",html)
 	yp := utils.MatchOneOf(html, `;ytplayer\.config\s*=\s*({.+?});`)
@@ -138,17 +143,13 @@ func youtubeDownload(uri string, result *common.VideoData) {
 		ytplayer = yp[1]
 	}
 	var youtube youtubeData
+
 	json.Unmarshal([]byte(ytplayer), &youtube)
 	title := youtube.Args.Title
 	format := extractVideoURLS(youtube, uri)
-	streams := strings.Split(youtube.Args.Stream, ",")
-	stream, _ := url.ParseQuery(streams[0]) // Best quality
-	quality := stream.Get("quality")
-	fmt.Println("[quality]", quality)
 
 	result.Site = "YouTube youtube.com"
 	result.Title = utils.FileName(title)
-	fmt.Println("[youtube] title:", result.Title)
 	result.Formats = format
 	return
 }
@@ -194,6 +195,7 @@ func extractVideoURLS(data youtubeData, referer string) map[string]common.Format
 		if !strings.Contains(realURL, "ratebypass=yes") {
 			realURL += "&ratebypass=yes"
 		}
+		log.Println("real", realURL)
 		size := utils.DownloadFileSize(realURL, referer)
 		urlData := common.URLData{
 			URL:  realURL,
